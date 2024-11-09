@@ -3,7 +3,7 @@ const msalConfig = {
   auth: {
     clientId: '896e65ec-f48b-43cc-8dd0-584d153b8622',  // Replace with your client ID from Azure AD
     authority: 'https://login.microsoftonline.com/98c82fc2-43b4-41ec-9b19-c979102344da',  // Replace with your tenant ID
-    redirectUri: 'https://hive.rescue.com/Extra_Apps/PWAs/REB/index.html'  // Redirect URI; update if using a specific URL
+    redirectUri: 'https://rescuebugtech.github.io/pwa-reb/index.html'  // Redirect URI; update if using a specific URL
   },
 };
 
