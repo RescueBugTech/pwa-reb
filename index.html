@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rescue Equipment Booking</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <!-- MSAL.js Library for Microsoft Authentication -->
+  <script src="https://alcdn.msauth.net/browser/2.20.0/js/msal-browser.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Tab Content Sections -->
+    <section id="home" class="tab-content active">
+      
+	  <h2><p id="user-name"></p></h2> <!-- This will display the signed-in user's name -->
+		<img src="images/FrontPage.jpg">
+      <p>Welcome to the Rescue Equipment Booking App!</p>
+    </section>
+	  
+	  
+	  
+	  
+	  
+	  
+<section id="scissor-lifts" class="tab-content">
+  <h2>Scissor Lifts</h2>
+  <div class="resource-grid">
+    <div id="engineering-list" class="resource-list">
+		
+      <img src="images/EngineerLift.jpg" alt="Engineering Scissor Lift" class="lift-image">
+		<p>Engineering Lift</p>
+      <div class="lift-info"></div>
+    </div>
+    <div id="molding-list" class="resource-list">
+		
+      <img src="images/MoldingLift.jpg" alt="Molding Scissor Lift" class="lift-image">
+		<p>Molding Lift</p>
+      <div class="lift-info"></div>
+    </div>
+    <div id="maintenance-list" class="resource-list">
+		
+      <img src="images/MaintLift.jpg" alt="Maintenance Scissor Lift" class="lift-image">
+		<p>Maintenance Lift</p>
+      <div class="lift-info"></div>
+    </div>
+  </div>
+</section>
+ 
+	  
+
+
+    <section id="vehicles" class="tab-content">
+      <h2>Vehicles</h2>
+      <div id="vehicles-list" class="resource-list"></div>
+    </section>
+    <section id="about" class="tab-content">
+      <h2>Version 1.0</h2>
+      <p>Initial testing release.</p>
+		<br />
+		<h2>Upcoming version plans</h2>
+		<p>Add R&D Vehicles</p>
+		<p>Ability to book from the app</p>
+		<p>Push alerts for resource availability and upcoming bookings</p>
+		<p>Clean up visuals and make it look pretty</p>
+    </section>
+  </div>
+
+	
+	
+	
+	
+	
+  <!-- Tab Navigation -->
+  <nav class="tab-bar">
+    <button class="tab-button" data-tab="home">Home</button>
+    <button class="tab-button" data-tab="scissor-lifts">Scissor Lifts</button>
+    <button class="tab-button" data-tab="vehicles">Vehicles</button>
+    <button class="tab-button" data-tab="about">About</button>
+  </nav>
+</body>
+</html>

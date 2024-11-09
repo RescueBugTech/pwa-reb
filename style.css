@@ -1,0 +1,104 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+}
+
+/* Container for Tab Content */
+.container {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Tab Navigation Bar */
+.tab-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;  /* Increased padding to lift the tab bar */
+  margin-bottom: 15px;  /* Adds space above the iPhone swipe-up area */
+  border-top: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-button:focus {
+  outline: none;
+}
+
+/* Active Tab Button Highlight */
+.tab-button.active {
+  font-weight: bold;
+  color: #0078D4; /* Microsoft blue for emphasis */
+  border-bottom: 3px solid #0078D4;  /* Indicator under active button */
+}
+
+/* Grid layout for scissor lifts */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.resource-list {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Style for scissor lift images */
+.lift-image {
+  width: 100%;
+  height: auto;
+  max-width: 150px;
+  margin-bottom: 10px;
+}
+
+/* Styling for resource status */
+.resource-status {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.available {
+  background-color: green;
+}
+
+.booked {
+  background-color: red;
+}
+
+
