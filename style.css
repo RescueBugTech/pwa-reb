@@ -85,27 +85,30 @@ body {
 }
 
 
+/* Adjust the container for full height */
 #lift-list-container {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: 400px; /* Adjust based on your page design */
   padding: 10px;
   gap: 20px;
+  height: calc(100vh - 150px); /* Adjust this based on button bar height */
 }
 
+/* Lift item styling */
 .lift-item {
   text-align: center;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+  position: relative;
 }
 
 
 
 
-/* Styling for resource status */
+/* Status light indicator styling */
 .resource-status {
   display: inline-block;
   width: 12px;

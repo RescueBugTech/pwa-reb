@@ -144,7 +144,6 @@ function formatTime(dateString) {
   });
 }
 
-// Update UI to display sorted bookings under each lift
 function updateUI(name, bookings) {
   const listElement = document.getElementById(`${name.toLowerCase()}-list`);
   if (!listElement) {
@@ -159,8 +158,14 @@ function updateUI(name, bookings) {
       <p><strong>Booked by:</strong> ${booking.organizer.emailAddress.name}</p>
       <p><strong>Time:</strong> ${formatTime(booking.start.dateTime)} - ${formatTime(booking.end.dateTime)}</p>
     </div>
-  `).join('') : '<p>Available</p>';
+  `).join('') : `
+    <div class="booking-info">
+      <span class="resource-status available"></span>
+      <p>Available</p>
+    </div>
+  `;
 }
+
 
 // Helper function to get the current time range (next hour)
 function getTimeRange() {
