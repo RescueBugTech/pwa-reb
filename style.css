@@ -84,6 +84,27 @@ body {
   margin-bottom: 10px;
 }
 
+
+#lift-list-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 400px; /* Adjust based on your page design */
+  padding: 10px;
+  gap: 20px;
+}
+
+.lift-item {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+
+
+
 /* Styling for resource status */
 .resource-status {
   display: inline-block;

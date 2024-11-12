@@ -109,7 +109,7 @@ async function displayUserName() {
   }
 }
 
-// Fetch resource status for scissor lifts
+// Existing function to fetch lift booking status
 async function getResourceStatus() {
   const token = await getToken();
   if (!token) return;
@@ -120,35 +120,10 @@ async function getResourceStatus() {
     { name: 'Maintenance', email: 'ScissorLiftMAINT@rescue.com' },
   ];
 
-  const { start, end } = getTimeRange();
-
   scissorLifts.forEach(async (lift) => {
     try {
-      const response = await fetch(
-        `https://graph.microsoft.com/v1.0/users/${lift.email}/calendar/calendarView?startDateTime=${start}&endDateTime=${end}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const isBooked = data.value && data.value.length > 0;
-
-        let bookingInfo = null;
-        if (isBooked) {
-          const event = data.value[0];
-          bookingInfo = {
-            organizer: event.organizer.emailAddress.name,
-            start: formatTime(event.start.dateTime),
-            end: formatTime(event.end.dateTime)
-          };
-        }
-
-        updateUI(lift.name, isBooked, bookingInfo);
-      } else {
-        console.error(`Failed to fetch data for ${lift.name}:`, response.statusText);
-      }
+      const bookings = await fetchBookingsForDate(lift.name, new Date().toISOString().slice(0, 10));
+      updateUI(lift.name, bookings);
     } catch (error) {
       console.error(`Failed to fetch data for ${lift.name}:`, error);
     }
@@ -169,29 +144,22 @@ function formatTime(dateString) {
   });
 }
 
-// Update UI with booking info
-function updateUI(name, isBooked, bookingInfo = null) {
+// Update UI to display sorted bookings under each lift
+function updateUI(name, bookings) {
   const listElement = document.getElementById(`${name.toLowerCase()}-list`);
-
   if (!listElement) {
     console.error(`Element with ID ${name.toLowerCase()}-list not found`);
     return;
   }
 
   const infoElement = listElement.querySelector('.lift-info');
-
-  infoElement.innerHTML = isBooked ? `
+  infoElement.innerHTML = bookings.length > 0 ? bookings.map(booking => `
     <div class="booking-info">
       <span class="resource-status booked"></span>
-      <p><strong>Booked by:</strong> ${bookingInfo.organizer}</p>
-      <p><strong>Time:</strong> ${bookingInfo.start} - ${bookingInfo.end}</p>
+      <p><strong>Booked by:</strong> ${booking.organizer.emailAddress.name}</p>
+      <p><strong>Time:</strong> ${formatTime(booking.start.dateTime)} - ${formatTime(booking.end.dateTime)}</p>
     </div>
-  ` : `
-    <div class="booking-info">
-      <span class="resource-status available"></span>
-      <p>Available</p>
-    </div>
-  `;
+  `).join('') : '<p>Available</p>';
 }
 
 // Helper function to get the current time range (next hour)
