@@ -1,7 +1,7 @@
 {
   "name": "Rescue Equipment Booking App",
   "short_name": "Rescue Equipment Booking",
-  "start_url": "https://hive.rescue.com/Extra_Apps/PWAs/REB/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
