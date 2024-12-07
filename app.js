@@ -17,6 +17,7 @@ msalInstance.handleRedirectPromise()
       storeToken(response.accessToken);
       displayUserName();
       getResourceStatus();  // Load resources after successful login
+      promptForBiometricEnrollment();
     } else {
       authenticateWithBiometrics();
     }
@@ -28,13 +29,58 @@ msalInstance.handleRedirectPromise()
 // Function to handle Microsoft 365 sign-in with redirect
 function signIn() {
   msalInstance.loginRedirect({
-    scopes: ['User.Read', 'Calendars.ReadWrite.Shared']
+    scopes: ['User.Read', 'Calendars.Read.Shared']
   });
 }
 
 // Store the token in local storage after login
 function storeToken(token) {
   localStorage.setItem("msalAccessToken", token);
+}
+
+// Prompt user to enable biometrics for subsequent logins
+function promptForBiometricEnrollment() {
+  if (window.cordova && cordova.plugins && cordova.plugins.fingerprint) {
+    cordova.plugins.fingerprint.isAvailable((result) => {
+      if (result.isAvailable) {
+        if (confirm("Would you like to enable Face ID / Touch ID for future logins?")) {
+          cordova.plugins.fingerprint.show({
+            clientId: "Resource Availability App",
+            clientSecret: "password"
+          }, () => {
+            console.log("Biometric enrollment successful");
+          }, (error) => {
+            console.error("Biometric enrollment failed:", error);
+          });
+        }
+      }
+    });
+  } else {
+    console.warn("Biometric authentication not supported on this device or browser.");
+  }
+}
+
+// Check for token in local storage and prompt for biometric authentication if available
+async function authenticateWithBiometrics() {
+  const token = localStorage.getItem("msalAccessToken");
+  if (token) {
+    if (window.cordova && cordova.plugins && cordova.plugins.fingerprint) {
+      cordova.plugins.fingerprint.show({
+        clientId: "Resource Availability App",
+        clientSecret: "password"
+      }, () => {
+        displayUserName();
+        getResourceStatus();
+      }, (error) => {
+        console.error("Biometric auth failed:", error);
+        signIn();
+      });
+    } else {
+      signIn();
+    }
+  } else {
+    signIn();
+  }
 }
 
 // Function to get access token from local storage
@@ -107,33 +153,31 @@ async function getResourceStatus() {
       console.error(`Failed to fetch data for ${lift.name}:`, error);
     }
   });
-
-  // Add event listeners for resource actions
-  addResourceEventListeners();
-}
-
-// Helper function to get the current time range (next hour)
-function getTimeRange() {
-  const start = new Date();
-  const end = new Date();
-  end.setHours(end.getHours() + 1);
-  return { start: start.toISOString(), end: end.toISOString() };
 }
 
 // Function to convert UTC time to local time without seconds and without leading zero in hour
 function formatTime(dateString) {
   const utcDate = new Date(dateString);
+
+  // Apply the timezone offset to get the local date and time
   const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+
   return localDate.toLocaleTimeString([], {
-    hour: 'numeric',
+    hour: 'numeric',  // Use 'numeric' to remove leading zero from single-digit hours
     minute: '2-digit',
-    hour12: true
+    hour12: true  // Ensures 12-hour format with AM/PM
   });
 }
 
 // Update UI with booking info
 function updateUI(name, isBooked, bookingInfo = null) {
   const listElement = document.getElementById(`${name.toLowerCase()}-list`);
+
+  if (!listElement) {
+    console.error(`Element with ID ${name.toLowerCase()}-list not found`);
+    return;
+  }
+
   const infoElement = listElement.querySelector('.lift-info');
 
   infoElement.innerHTML = isBooked ? `
@@ -150,137 +194,46 @@ function updateUI(name, isBooked, bookingInfo = null) {
   `;
 }
 
-// Add event listeners to the resource buttons
-function addResourceEventListeners() {
-  const resourceLists = document.querySelectorAll('.resource-list');
-  resourceLists.forEach(list => {
-    list.addEventListener('click', async () => {
-      const liftId = list.id;
-      const bookings = await fetchBookingsForDate(liftId, new Date().toISOString().split('T')[0]);
-      openActionDialog(liftId, bookings);
+// Helper function to get the current time range (next hour)
+function getTimeRange() {
+  const start = new Date();
+  const end = new Date();
+  end.setHours(end.getHours() + 1);
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+
+// Tab switching functionality with active button highlight
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      // Refresh Scissor Lifts section if the tab is clicked
+      if (target === 'scissor-lifts') {
+        clearScissorLiftData();
+        getResourceStatus();
+      }
+
+      // Set active state for tab content
+      tabContents.forEach((content) => {
+        content.classList.toggle('active', content.id === target);
+      });
+
+      // Highlight the active tab button
+      tabs.forEach((btn) => btn.classList.remove('active'));
+      tab.classList.add('active');
     });
   });
-}
+});
 
-// Open modal for booking options
-function openActionDialog(liftId, bookings) {
-  const bookingModal = document.getElementById('bookingModal');
-  const closeModal = document.querySelector('.close');
-  const bookResourceBtn = document.getElementById('bookResourceBtn');
-  const reviewBookingBtn = document.getElementById('reviewBookingBtn');
-  const extendBookingBtn = document.getElementById('extendBookingBtn');
-  const cancelBookingBtn = document.getElementById('cancelBookingBtn');
-  const dateTimePicker = document.getElementById('dateTimePicker');
-
-  bookingModal.style.display = 'block';
-
-  const hasActiveBooking = bookings.some(booking => booking.organizer.emailAddress.address === 'yourUserEmailHere');
-  const isAvailable = bookings.length === 0;
-
-  bookResourceBtn.disabled = !isAvailable;
-  reviewBookingBtn.disabled = !hasActiveBooking;
-  extendBookingBtn.disabled = !hasActiveBooking;
-  cancelBookingBtn.disabled = !hasActiveBooking;
-
-  bookResourceBtn.onclick = () => {
-    dateTimePicker.style.display = 'block';
-    dateTimePicker.addEventListener('change', () => {
-      const selectedDateTime = new Date(dateTimePicker.value).toISOString();
-      confirmBooking(liftId, selectedDateTime);
-      bookingModal.style.display = 'none';
-    });
-  };
-
-  reviewBookingBtn.onclick = () => {
-    reviewBooking(liftId, bookings);
-  };
-
-  extendBookingBtn.onclick = () => {
-    const options = ["15 Minutes", "30 Minutes", "45 Minutes", "1 Hour"];
-    let extendSelection = prompt(`Extend Booking by:\n${options.join('\n')}`);
-    if (options.includes(extendSelection)) {
-      extendBooking(liftId, extendSelection);
-    }
-  };
-
-  cancelBookingBtn.onclick = () => {
-    if (confirm("Do you really want to cancel this booking?")) {
-      cancelBooking(liftId, bookings);
-      bookingModal.style.display = 'none';
-    }
-  };
-
-  closeModal.onclick = function () {
-    bookingModal.style.display = 'none';
-  };
-
-  window.onclick = function (event) {
-    if (event.target == bookingModal) {
-      bookingModal.style.display = 'none';
-    }
-  };
-}
-
-// Confirm booking logic
-function confirmBooking(liftId, selectedDateTime) {
-  if (confirm(`Confirm Booking for ${new Date(selectedDateTime).toLocaleString()}?`)) {
-    makeBooking(liftId, selectedDateTime);
-  }
-}
-
-// Make a booking
-async function makeBooking(liftId, dateTime) {
-  const token = await getToken();
-  if (!token) return;
-
-  const email = getLiftEmail(liftId);
-  
-  const bookingData = {
-    subject: 'Resource Booking',
-    start: { dateTime: dateTime, timeZone: 'UTC' },
-    end: { dateTime: new Date(new Date(dateTime).getTime() + 3600000).toISOString(), timeZone: 'UTC' },
-    attendees: [{ emailAddress: { address: email }, type: 'required' }]
-  };
-
-  try {
-    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${email}/events`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(bookingData)
-    });
-
-    if (response.ok) {
-      alert("Booking confirmed!");
-    } else {
-      console.error('Failed to create booking:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error while booking:', error);
-  }
-}
-
-// Review an existing booking
-function reviewBooking(liftId, bookings) {
-  if (bookings.length === 0) {
-    alert("No bookings available to review.");
-    return;
-  }
-
-  const booking = bookings[0];
-  alert(`Booking Details:\nBooked By: ${booking.organizer.emailAddress.name}\nStart: ${booking.start.dateTime}\nEnd: ${booking.end.dateTime}`);
-}
-
-// Extend an existing booking
-function extendBooking(liftId, selection) {
-  alert(`Booking extended by ${selection}.`);
-}
-
-// Cancel an existing booking
-function cancelBooking(liftId, bookings) {
-  alert("Booking cancelled.");
+// Clear scissor lift data to refresh it when tab is clicked
+function clearScissorLiftData() {
+  document.querySelectorAll('.lift-info').forEach((element) => {
+    element.innerHTML = '<p>Loading...</p>';
+  });
 }
 
 // Fetch bookings for a specific lift and date
@@ -312,4 +265,13 @@ function getLiftEmail(liftId) {
     'maintenance-list': 'ScissorLiftMAINT@rescue.com'
   };
   return liftEmails[liftId];
+}
+
+// Helper function to get disabled times based on existing bookings
+function getDisabledTimes(existingBookings) {
+  return existingBookings.map(booking => {
+    const start = new Date(booking.start.dateTime);
+
+    return start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  });
 }
