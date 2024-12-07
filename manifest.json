@@ -1,7 +1,7 @@
 {
   "name": "Rescue Equipment Booking App",
   "short_name": "Rescue Equipment Booking",
-  "start_url": "/",
+  "start_url": "https://rescuebugtech.github.io/pwa-reb/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
