@@ -153,6 +153,9 @@ async function getResourceStatus() {
       console.error(`Failed to fetch data for ${lift.name}:`, error);
     }
   });
+	
+// Add this at the end of `getResourceStatus`
+addResourceEventListeners();
 }
 
 // Function to convert UTC time to local time without seconds and without leading zero in hour
@@ -274,4 +277,154 @@ function getDisabledTimes(existingBookings) {
 
     return start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   });
+}
+
+// Add event listeners to the resource buttons
+function addResourceEventListeners() {
+  const resourceLists = document.querySelectorAll('.resource-list');
+  resourceLists.forEach(list => {
+    list.addEventListener('click', async () => {
+      const liftId = list.id;
+      const bookings = await fetchBookingsForDate(liftId, new Date().toISOString().split('T')[0]);
+      
+      openActionDialog(liftId, bookings);
+    });
+  });
+}
+
+function openActionDialog(liftId, bookings) {
+  // Show booking options
+  if (confirm("Book this Resource?")) {
+    openDateTimePicker(liftId, bookings);
+  }
+}
+
+function openDateTimePicker(liftId, bookings) {
+  // Open native date-time picker
+  const input = document.createElement('input');
+  input.type = 'datetime-local';
+  input.min = new Date().toISOString().split('.')[0];  // Minimum time is now
+
+  input.addEventListener('change', (event) => {
+    const selectedDateTime = new Date(event.target.value).toISOString();
+
+    // Check for conflicting bookings
+    const isConflicting = bookings.some(booking => {
+      const bookingStart = new Date(booking.start.dateTime).getTime();
+      const bookingEnd = new Date(booking.end.dateTime).getTime();
+      return selectedDateTime >= bookingStart && selectedDateTime <= bookingEnd;
+    });
+
+    if (isConflicting) {
+      alert("This time slot is already booked. Please choose another time.");
+    } else {
+      confirmBooking(liftId, selectedDateTime);
+    }
+  });
+
+  input.click();
+}
+
+function confirmBooking(liftId, selectedDateTime) {
+  if (confirm(`Confirm Booking for ${new Date(selectedDateTime).toLocaleString()}?`)) {
+    // Proceed to make a booking
+    makeBooking(liftId, selectedDateTime);
+  }
+}
+
+async function makeBooking(liftId, dateTime) {
+  const token = await getToken();
+  if (!token) return;
+
+  // Assuming the liftId maps to an email (as in your current implementation)
+  const email = getLiftEmail(liftId);
+  
+  // Example data for the event creation request
+  const bookingData = {
+    subject: 'Resource Booking',
+    start: { dateTime: dateTime, timeZone: 'UTC' },
+    end: { dateTime: new Date(new Date(dateTime).getTime() + 3600000).toISOString(), timeZone: 'UTC' },  // 1 hour booking by default
+    attendees: [{ emailAddress: { address: email }, type: 'required' }]
+  };
+
+  try {
+    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${email}/events`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(bookingData)
+    });
+
+    if (response.ok) {
+      alert("Booking confirmed!");
+    } else {
+      console.error('Failed to create booking:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error while booking:', error);
+  }
+}
+
+function openActionDialog(liftId, bookings) {
+  // Add a native dialog for selecting different actions
+  const action = prompt("Select action: \n1. Book this Resource\n2. Review Booking\n3. Extend Booking\n4. Cancel Booking");
+
+  switch (action) {
+    case "1":
+      openDateTimePicker(liftId, bookings);
+      break;
+    case "2":
+      reviewBooking(liftId, bookings);
+      break;
+    case "3":
+      extendBooking(liftId, bookings);
+      break;
+    case "4":
+      cancelBooking(liftId, bookings);
+      break;
+    default:
+      alert("Invalid selection.");
+      break;
+  }
+}
+
+function reviewBooking(liftId, bookings) {
+  if (bookings.length === 0) {
+    alert("No bookings available to review.");
+    return;
+  }
+
+  const booking = bookings[0]; // Assuming only one booking at a time
+  alert(`Booking Details:\nBooked By: ${booking.organizer.emailAddress.name}\nStart: ${booking.start.dateTime}\nEnd: ${booking.end.dateTime}`);
+}
+
+function extendBooking(liftId, bookings) {
+  if (bookings.length === 0) {
+    alert("No active booking to extend.");
+    return;
+  }
+
+  const options = ["15 Minutes", "30 Minutes", "45 Minutes", "1 Hour"];
+  const selection = prompt(`Extend Booking by:\n${options.join('\n')}`);
+
+  if (options.includes(selection)) {
+    // Extend booking logic
+    alert(`Booking extended by ${selection}.`);
+  } else {
+    alert("Invalid selection.");
+  }
+}
+
+function cancelBooking(liftId, bookings) {
+  if (bookings.length === 0) {
+    alert("No active booking to cancel.");
+    return;
+  }
+
+  if (confirm("Do you really want to cancel this booking?")) {
+    // Logic to cancel booking
+    alert("Booking cancelled.");
+  }
 }
