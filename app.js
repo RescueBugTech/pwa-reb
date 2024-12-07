@@ -7,18 +7,6 @@ const msalConfig = {
   },
 };
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful');
-      })
-      .catch(error => {
-        console.error('ServiceWorker registration failed:', error);
-      });
-  });
-}
-
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 // Handle the redirect response
@@ -40,17 +28,8 @@ msalInstance.handleRedirectPromise()
 
 // Function to handle Microsoft 365 sign-in with redirect
 function signIn() {
-  msalInstance.loginPopup({
+  msalInstance.loginRedirect({
     scopes: ['User.Read', 'Calendars.Read.Shared']
-  }).then((response) => {
-    if (response) {
-      msalInstance.setActiveAccount(response.account);
-      storeToken(response.accessToken);
-      displayUserName();
-      getResourceStatus();
-    }
-  }).catch((error) => {
-    console.error('Login failed:', error);
   });
 }
 
@@ -106,25 +85,12 @@ async function authenticateWithBiometrics() {
 
 // Function to get access token from local storage
 async function getToken() {
-  try {
-    const account = msalInstance.getActiveAccount();
-    if (!account) {
-      throw new Error('No active account');
-    }
-
-    const response = await msalInstance.acquireTokenSilent({
-      scopes: ['User.Read', 'Calendars.Read.Shared'],
-      account: account
-    });
-
-    return response.accessToken;
-  } catch (error) {
-    console.error('Token acquisition failed:', error);
-    // If silent token acquisition fails, try interactive
-    return msalInstance.acquireTokenPopup({
-      scopes: ['User.Read', 'Calendars.Read.Shared']
-    }).then(response => response.accessToken);
+  const token = localStorage.getItem("msalAccessToken");
+  if (!token) {
+    console.warn("No token found, user needs to sign in.");
+    return null;
   }
+  return token;
 }
 
 // Function to display the signed-in user's name
@@ -238,33 +204,6 @@ function getTimeRange() {
 
 // Tab switching functionality with active button highlight
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Microsoft Authentication first
-  if (msalInstance) {
-    msalInstance.handleRedirectPromise()
-      .then((response) => {
-        if (response) {
-          msalInstance.setActiveAccount(response.account);
-          storeToken(response.accessToken);
-          displayUserName();
-          getResourceStatus();
-        } else {
-          // Check if we have a logged in user
-          const accounts = msalInstance.getAllAccounts();
-          if (accounts.length === 0) {
-            signIn();
-          } else {
-            msalInstance.setActiveAccount(accounts[0]);
-            displayUserName();
-            getResourceStatus();
-          }
-        }
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-      });
-  }
-
-  // Tab switching functionality
   const tabs = document.querySelectorAll('.tab-button');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -272,25 +211,20 @@ document.addEventListener('DOMContentLoaded', () => {
     tab.addEventListener('click', () => {
       const target = tab.dataset.tab;
 
-      // Hide all tab contents
-      tabContents.forEach((content) => {
-        content.classList.remove('active');
-      });
-
-      // Show selected tab content
-      const selectedContent = document.getElementById(target);
-      if (selectedContent) {
-        selectedContent.classList.add('active');
-      }
-
-      // Update active tab button
-      tabs.forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      // Refresh data if needed
+      // Refresh Scissor Lifts section if the tab is clicked
       if (target === 'scissor-lifts') {
+        clearScissorLiftData();
         getResourceStatus();
       }
+
+      // Set active state for tab content
+      tabContents.forEach((content) => {
+        content.classList.toggle('active', content.id === target);
+      });
+
+      // Highlight the active tab button
+      tabs.forEach((btn) => btn.classList.remove('active'));
+      tab.classList.add('active');
     });
   });
 });
@@ -340,141 +274,4 @@ function getDisabledTimes(existingBookings) {
 
     return start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   });
-}
-
-// Add after existing imports at the top
-import QrScanner from 'https://unpkg.com/qr-scanner/qr-scanner.min.js';
-
-// Add these functions after the existing code
-async function handleResourceSelection(resourceId) {
-  const actions = await showNativeActionSheet([
-    'Book this Resource',
-    'Review Booking',
-    'Extend Booking',
-    'Cancel Booking'
-  ]);
-
-  switch (actions) {
-    case 'Book this Resource':
-      showBookingDialog(resourceId);
-      break;
-    case 'Review Booking':
-      showBookingReview(resourceId);
-      break;
-    case 'Extend Booking':
-      showExtendBooking(resourceId);
-      break;
-    case 'Cancel Booking':
-      showCancelConfirmation(resourceId);
-      break;
-  }
-}
-
-async function showNativeActionSheet(options) {
-  if (window.navigator && window.navigator.standalone) {
-    // iOS
-    return new Promise((resolve) => {
-      const actionSheet = document.createElement('div');
-      actionSheet.className = 'action-sheet';
-      
-      options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option;
-        button.onclick = () => {
-          document.body.removeChild(actionSheet);
-          resolve(option);
-        };
-        actionSheet.appendChild(button);
-      });
-      
-      document.body.appendChild(actionSheet);
-    });
-  } else {
-    // Android or other
-    return new Promise((resolve) => {
-      const select = document.createElement('select');
-      options.forEach(option => {
-        const optionEl = document.createElement('option');
-        optionEl.value = option;
-        optionEl.textContent = option;
-        select.appendChild(optionEl);
-      });
-      select.onchange = (e) => resolve(e.target.value);
-      select.click();
-    });
-  }
-}
-
-// QR Scanner Setup
-let qrScanner = null;
-
-document.getElementById('start-scan')?.addEventListener('click', () => {
-  const video = document.getElementById('qr-video');
-  
-  if (!qrScanner) {
-    qrScanner = new QrScanner(video, result => {
-      const resourceId = parseQRCode(result);
-      if (resourceId) {
-        handleResourceSelection(resourceId);
-      }
-    });
-  }
-  
-  if (qrScanner.hasFlash) {
-    qrScanner.toggleFlash();
-  }
-  
-  qrScanner.start();
-});
-
-// Push Notification Setup
-async function requestNotificationPermission() {
-  if ('Notification' in window) {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY'
-      });
-      // Send subscription to server
-      await sendSubscriptionToServer(subscription);
-    }
-  }
-}
-
-// Add click handlers to resource images
-document.querySelectorAll('.lift-image').forEach(img => {
-  img.addEventListener('click', () => {
-    const resourceId = img.parentElement.id;
-    handleResourceSelection(resourceId);
-  });
-});
-
-// Booking functions
-async function showBookingDialog(resourceId) {
-  const date = await showNativeDatePicker();
-  const time = await showNativeTimePicker();
-  const duration = await showNativeDurationPicker();
-  
-  if (date && time && duration) {
-    const bookingDetails = {
-      resourceId,
-      startTime: combineDateTime(date, time),
-      duration
-    };
-    
-    await createBooking(bookingDetails);
-  }
-}
-
-async function createBooking(details) {
-  const token = await getToken();
-  // Implementation for creating booking via Microsoft Graph API
-  // ...
-}
-
-// Add this helper function to check authentication status
-function isAuthenticated() {
-  return msalInstance.getAllAccounts().length > 0;
 }

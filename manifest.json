@@ -1,34 +1,20 @@
 {
   "name": "Rescue Equipment Booking App",
   "short_name": "Rescue Equipment Booking",
-  "start_url": "https://rescuebugtech.github.io/pwa-reb/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "description": "Book and manage rescue equipment resources",
-  "orientation": "portrait",
-  "scope": "/",
   "icons": [
     {
       "src": "eyecons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "eyecons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Scan QR Code",
-      "short_name": "Scan QR",
-      "description": "Scan a QR code to book a resource",
-      "url": "/?action=scan",
-      "icons": [{ "src": "eyecons/qr-scan.png", "sizes": "192x192" }]
+      "type": "image/png"
     }
   ]
 }
