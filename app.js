@@ -7,6 +7,18 @@ const msalConfig = {
   },
 };
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful');
+      })
+      .catch(error => {
+        console.error('ServiceWorker registration failed:', error);
+      });
+  });
+}
+
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 // Handle the redirect response
@@ -28,8 +40,17 @@ msalInstance.handleRedirectPromise()
 
 // Function to handle Microsoft 365 sign-in with redirect
 function signIn() {
-  msalInstance.loginRedirect({
+  msalInstance.loginPopup({
     scopes: ['User.Read', 'Calendars.Read.Shared']
+  }).then((response) => {
+    if (response) {
+      msalInstance.setActiveAccount(response.account);
+      storeToken(response.accessToken);
+      displayUserName();
+      getResourceStatus();
+    }
+  }).catch((error) => {
+    console.error('Login failed:', error);
   });
 }
 
@@ -85,12 +106,25 @@ async function authenticateWithBiometrics() {
 
 // Function to get access token from local storage
 async function getToken() {
-  const token = localStorage.getItem("msalAccessToken");
-  if (!token) {
-    console.warn("No token found, user needs to sign in.");
-    return null;
+  try {
+    const account = msalInstance.getActiveAccount();
+    if (!account) {
+      throw new Error('No active account');
+    }
+
+    const response = await msalInstance.acquireTokenSilent({
+      scopes: ['User.Read', 'Calendars.Read.Shared'],
+      account: account
+    });
+
+    return response.accessToken;
+  } catch (error) {
+    console.error('Token acquisition failed:', error);
+    // If silent token acquisition fails, try interactive
+    return msalInstance.acquireTokenPopup({
+      scopes: ['User.Read', 'Calendars.Read.Shared']
+    }).then(response => response.accessToken);
   }
-  return token;
 }
 
 // Function to display the signed-in user's name
@@ -204,6 +238,33 @@ function getTimeRange() {
 
 // Tab switching functionality with active button highlight
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Microsoft Authentication first
+  if (msalInstance) {
+    msalInstance.handleRedirectPromise()
+      .then((response) => {
+        if (response) {
+          msalInstance.setActiveAccount(response.account);
+          storeToken(response.accessToken);
+          displayUserName();
+          getResourceStatus();
+        } else {
+          // Check if we have a logged in user
+          const accounts = msalInstance.getAllAccounts();
+          if (accounts.length === 0) {
+            signIn();
+          } else {
+            msalInstance.setActiveAccount(accounts[0]);
+            displayUserName();
+            getResourceStatus();
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+      });
+  }
+
+  // Tab switching functionality
   const tabs = document.querySelectorAll('.tab-button');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -211,20 +272,25 @@ document.addEventListener('DOMContentLoaded', () => {
     tab.addEventListener('click', () => {
       const target = tab.dataset.tab;
 
-      // Refresh Scissor Lifts section if the tab is clicked
-      if (target === 'scissor-lifts') {
-        clearScissorLiftData();
-        getResourceStatus();
-      }
-
-      // Set active state for tab content
+      // Hide all tab contents
       tabContents.forEach((content) => {
-        content.classList.toggle('active', content.id === target);
+        content.classList.remove('active');
       });
 
-      // Highlight the active tab button
-      tabs.forEach((btn) => btn.classList.remove('active'));
+      // Show selected tab content
+      const selectedContent = document.getElementById(target);
+      if (selectedContent) {
+        selectedContent.classList.add('active');
+      }
+
+      // Update active tab button
+      tabs.forEach((t) => t.classList.remove('active'));
       tab.classList.add('active');
+
+      // Refresh data if needed
+      if (target === 'scissor-lifts') {
+        getResourceStatus();
+      }
     });
   });
 });
@@ -406,4 +472,9 @@ async function createBooking(details) {
   const token = await getToken();
   // Implementation for creating booking via Microsoft Graph API
   // ...
+}
+
+// Add this helper function to check authentication status
+function isAuthenticated() {
+  return msalInstance.getAllAccounts().length > 0;
 }
