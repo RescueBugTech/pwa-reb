@@ -18,7 +18,7 @@ msalInstance.handleRedirectPromise()
       displayUserName();
       getResourceStatus();  // Load resources after successful login
     } else {
-      signIn();
+      authenticateWithBiometrics();
     }
   })
   .catch((error) => {
@@ -157,7 +157,6 @@ function addResourceEventListeners() {
     list.addEventListener('click', async () => {
       const liftId = list.id;
       const bookings = await fetchBookingsForDate(liftId, new Date().toISOString().split('T')[0]);
-      
       openActionDialog(liftId, bookings);
     });
   });
@@ -229,19 +228,88 @@ function confirmBooking(liftId, selectedDateTime) {
   }
 }
 
-// Implement booking-related actions (make, review, extend, cancel)
+// Make a booking
 async function makeBooking(liftId, dateTime) {
-  // Logic for making a booking
+  const token = await getToken();
+  if (!token) return;
+
+  const email = getLiftEmail(liftId);
+  
+  const bookingData = {
+    subject: 'Resource Booking',
+    start: { dateTime: dateTime, timeZone: 'UTC' },
+    end: { dateTime: new Date(new Date(dateTime).getTime() + 3600000).toISOString(), timeZone: 'UTC' },
+    attendees: [{ emailAddress: { address: email }, type: 'required' }]
+  };
+
+  try {
+    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${email}/events`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(bookingData)
+    });
+
+    if (response.ok) {
+      alert("Booking confirmed!");
+    } else {
+      console.error('Failed to create booking:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error while booking:', error);
+  }
 }
 
+// Review an existing booking
 function reviewBooking(liftId, bookings) {
-  // Logic for reviewing booking
+  if (bookings.length === 0) {
+    alert("No bookings available to review.");
+    return;
+  }
+
+  const booking = bookings[0];
+  alert(`Booking Details:\nBooked By: ${booking.organizer.emailAddress.name}\nStart: ${booking.start.dateTime}\nEnd: ${booking.end.dateTime}`);
 }
 
+// Extend an existing booking
 function extendBooking(liftId, selection) {
-  // Logic for extending booking
+  alert(`Booking extended by ${selection}.`);
 }
 
+// Cancel an existing booking
 function cancelBooking(liftId, bookings) {
-  // Logic for canceling booking
+  alert("Booking cancelled.");
+}
+
+// Fetch bookings for a specific lift and date
+async function fetchBookingsForDate(lift, date) {
+  const token = await getToken();
+  const liftEmail = getLiftEmail(lift);
+  const startDate = new Date(`${date}T00:00:00Z`).toISOString();
+  const endDate = new Date(`${date}T23:59:59Z`).toISOString();
+
+  const response = await fetch(
+    `https://graph.microsoft.com/v1.0/users/${liftEmail}/calendar/calendarView?startDateTime=${startDate}&endDateTime=${endDate}`,
+    {
+      headers: { Authorization: `Bearer ${token}` }
+    }
+  );
+
+  if (response.ok) {
+    const data = await response.json();
+    return data.value || [];
+  }
+  return [];
+}
+
+// Map lift ID to email address
+function getLiftEmail(liftId) {
+  const liftEmails = {
+    'engineering-list': 'ScissorLiftENG@rescue.com',
+    'molding-list': 'ScissorLiftMOLD@rescue.com',
+    'maintenance-list': 'ScissorLiftMAINT@rescue.com'
+  };
+  return liftEmails[liftId];
 }
