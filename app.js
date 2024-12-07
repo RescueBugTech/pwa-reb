@@ -292,45 +292,78 @@ function addResourceEventListeners() {
   });
 }
 
+// Get modal element
+const bookingModal = document.getElementById('bookingModal');
+const closeModal = document.querySelector('.close');
+const bookResourceBtn = document.getElementById('bookResourceBtn');
+const reviewBookingBtn = document.getElementById('reviewBookingBtn');
+const extendBookingBtn = document.getElementById('extendBookingBtn');
+const cancelBookingBtn = document.getElementById('cancelBookingBtn');
+const dateTimePicker = document.getElementById('dateTimePicker');
+
+// Open modal
 function openActionDialog(liftId, bookings) {
-  // Show booking options
-  if (confirm("Book this Resource?")) {
-    openDateTimePicker(liftId, bookings);
-  }
-}
+  bookingModal.style.display = 'block';
+  
+  // Enable or disable buttons based on the booking state
+  const hasActiveBooking = bookings.some(booking => booking.organizer.emailAddress.address === 'yourUserEmailHere');
+  const isAvailable = bookings.length === 0;
 
-function openDateTimePicker(liftId, bookings) {
-  // Open native date-time picker
-  const input = document.createElement('input');
-  input.type = 'datetime-local';
-  input.min = new Date().toISOString().split('.')[0];  // Minimum time is now
+  bookResourceBtn.disabled = !isAvailable;
+  reviewBookingBtn.disabled = !hasActiveBooking;
+  extendBookingBtn.disabled = !hasActiveBooking;
+  cancelBookingBtn.disabled = !hasActiveBooking;
 
-  input.addEventListener('change', (event) => {
-    const selectedDateTime = new Date(event.target.value).toISOString();
-
-    // Check for conflicting bookings
-    const isConflicting = bookings.some(booking => {
-      const bookingStart = new Date(booking.start.dateTime).getTime();
-      const bookingEnd = new Date(booking.end.dateTime).getTime();
-      return selectedDateTime >= bookingStart && selectedDateTime <= bookingEnd;
-    });
-
-    if (isConflicting) {
-      alert("This time slot is already booked. Please choose another time.");
-    } else {
+  // Event listeners for buttons
+  bookResourceBtn.onclick = () => {
+    dateTimePicker.style.display = 'block';
+    dateTimePicker.addEventListener('change', () => {
+      const selectedDateTime = new Date(dateTimePicker.value).toISOString();
       confirmBooking(liftId, selectedDateTime);
-    }
-  });
+      bookingModal.style.display = 'none';
+    });
+  };
 
-  input.click();
+  reviewBookingBtn.onclick = () => {
+    reviewBooking(liftId, bookings);
+  };
+
+  extendBookingBtn.onclick = () => {
+    // Display the options for extending
+    const options = ["15 Minutes", "30 Minutes", "45 Minutes", "1 Hour"];
+    let extendSelection = prompt(`Extend Booking by:\n${options.join('\n')}`);
+    if (options.includes(extendSelection)) {
+      extendBooking(liftId, extendSelection);
+    }
+  };
+
+  cancelBookingBtn.onclick = () => {
+    if (confirm("Do you really want to cancel this booking?")) {
+      cancelBooking(liftId, bookings);
+      bookingModal.style.display = 'none';
+    }
+  };
 }
 
+// Close modal when user clicks on <span> (x)
+closeModal.onclick = function () {
+  bookingModal.style.display = 'none';
+};
+
+// Close modal if user clicks outside of it
+window.onclick = function (event) {
+  if (event.target == bookingModal) {
+    bookingModal.style.display = 'none';
+  }
+};
+
+// Confirm booking logic
 function confirmBooking(liftId, selectedDateTime) {
   if (confirm(`Confirm Booking for ${new Date(selectedDateTime).toLocaleString()}?`)) {
-    // Proceed to make a booking
     makeBooking(liftId, selectedDateTime);
   }
 }
+
 
 async function makeBooking(liftId, dateTime) {
   const token = await getToken();
