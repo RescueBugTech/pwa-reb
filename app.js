@@ -275,3 +275,135 @@ function getDisabledTimes(existingBookings) {
     return start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   });
 }
+
+// Add after existing imports at the top
+import QrScanner from 'https://unpkg.com/qr-scanner/qr-scanner.min.js';
+
+// Add these functions after the existing code
+async function handleResourceSelection(resourceId) {
+  const actions = await showNativeActionSheet([
+    'Book this Resource',
+    'Review Booking',
+    'Extend Booking',
+    'Cancel Booking'
+  ]);
+
+  switch (actions) {
+    case 'Book this Resource':
+      showBookingDialog(resourceId);
+      break;
+    case 'Review Booking':
+      showBookingReview(resourceId);
+      break;
+    case 'Extend Booking':
+      showExtendBooking(resourceId);
+      break;
+    case 'Cancel Booking':
+      showCancelConfirmation(resourceId);
+      break;
+  }
+}
+
+async function showNativeActionSheet(options) {
+  if (window.navigator && window.navigator.standalone) {
+    // iOS
+    return new Promise((resolve) => {
+      const actionSheet = document.createElement('div');
+      actionSheet.className = 'action-sheet';
+      
+      options.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option;
+        button.onclick = () => {
+          document.body.removeChild(actionSheet);
+          resolve(option);
+        };
+        actionSheet.appendChild(button);
+      });
+      
+      document.body.appendChild(actionSheet);
+    });
+  } else {
+    // Android or other
+    return new Promise((resolve) => {
+      const select = document.createElement('select');
+      options.forEach(option => {
+        const optionEl = document.createElement('option');
+        optionEl.value = option;
+        optionEl.textContent = option;
+        select.appendChild(optionEl);
+      });
+      select.onchange = (e) => resolve(e.target.value);
+      select.click();
+    });
+  }
+}
+
+// QR Scanner Setup
+let qrScanner = null;
+
+document.getElementById('start-scan')?.addEventListener('click', () => {
+  const video = document.getElementById('qr-video');
+  
+  if (!qrScanner) {
+    qrScanner = new QrScanner(video, result => {
+      const resourceId = parseQRCode(result);
+      if (resourceId) {
+        handleResourceSelection(resourceId);
+      }
+    });
+  }
+  
+  if (qrScanner.hasFlash) {
+    qrScanner.toggleFlash();
+  }
+  
+  qrScanner.start();
+});
+
+// Push Notification Setup
+async function requestNotificationPermission() {
+  if ('Notification' in window) {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY'
+      });
+      // Send subscription to server
+      await sendSubscriptionToServer(subscription);
+    }
+  }
+}
+
+// Add click handlers to resource images
+document.querySelectorAll('.lift-image').forEach(img => {
+  img.addEventListener('click', () => {
+    const resourceId = img.parentElement.id;
+    handleResourceSelection(resourceId);
+  });
+});
+
+// Booking functions
+async function showBookingDialog(resourceId) {
+  const date = await showNativeDatePicker();
+  const time = await showNativeTimePicker();
+  const duration = await showNativeDurationPicker();
+  
+  if (date && time && duration) {
+    const bookingDetails = {
+      resourceId,
+      startTime: combineDateTime(date, time),
+      duration
+    };
+    
+    await createBooking(bookingDetails);
+  }
+}
+
+async function createBooking(details) {
+  const token = await getToken();
+  // Implementation for creating booking via Microsoft Graph API
+  // ...
+}
