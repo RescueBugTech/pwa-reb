@@ -144,3 +144,12 @@ function getTimeRange() {
   end.setHours(end.getHours() + 1);
   return { start: start.toISOString(), end: end.toISOString() };
 }
+
+
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('Service worker registered'))
+    .catch(console.error);
+}
+
