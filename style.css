@@ -102,3 +102,58 @@ body {
 }
 
 
+/* PWA Banners */
+.pwa-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  z-index: 9999;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.pwa-banner-content p {
+  margin-bottom: 10px;
+}
+
+.pwa-banner-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pwa-banner-actions button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #0078D4;
+  background: #0078D4;
+  color: #fff;
+}
+
+#dismiss-install, #close-reminder, #close-ios {
+  background: #ccc;
+  border: 1px solid #aaa;
+  color: #000;
+}
+
+.pwa-share-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('data:image/svg+xml,%3Csvg fill="%23000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath d="M12 2l-5.5 5.5 1.42 1.42L11 5.83V17h2V5.83l3.08 3.09 1.42-1.42L12 2zm-8 18h16v2H4z"/%3E%3C/svg%3E');
+  background-size: cover;
+  vertical-align: middle;
+}
