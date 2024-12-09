@@ -1,85 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rescue Equipment Booking</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
-  <!-- MSAL.js Library for Microsoft Authentication -->
   <script src="https://alcdn.msauth.net/browser/2.20.0/js/msal-browser.min.js"></script>
-  <script defer src="install.js"></script>
   <script defer src="app.js"></script>
+  <script defer src="install.js"></script>
+  <script defer src="ui.js"></script>
 </head>
 <body>
-  <div class="container">
-    <!-- Tab Content Sections -->
-    <section id="home" class="tab-content active">
-      
-	  <h2><p id="user-name"></p></h2> <!-- This will display the signed-in user's name -->
-		<img src="images/FrontPage.jpg">
-      <p>Welcome to the Rescue Equipment Booking App!</p>
-    </section>
-	  
-	  
-	  
-	  
-	  
-	  
-<section id="scissor-lifts" class="tab-content">
-  <h2>Scissor Lifts</h2>
-  <div class="resource-grid">
-    <div id="engineering-list" class="resource-list">
-		
-      <img src="images/EngineerLift.jpg" alt="Engineering Scissor Lift" class="lift-image">
-		<p>Engineering Lift</p>
-      <div class="lift-info"></div>
-    </div>
-    <div id="molding-list" class="resource-list">
-		
-      <img src="images/MoldingLift.jpg" alt="Molding Scissor Lift" class="lift-image">
-		<p>Molding Lift</p>
-      <div class="lift-info"></div>
-    </div>
-    <div id="maintenance-list" class="resource-list">
-		
-      <img src="images/MaintLift.jpg" alt="Maintenance Scissor Lift" class="lift-image">
-		<p>Maintenance Lift</p>
-      <div class="lift-info"></div>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 id="user-name" class="header-title">Asset Tracker</h1>
+    </header>
+    <main class="app-main">
+      <!-- Main content could go here if needed -->
+    </main>
+    <nav class="tab-bar">
+      <button class="tab-button" data-tab="home">
+        <img src="eyecons/home-tab.png" alt="Home" class="tab-icon">
+        <span class="tab-label">Home</span>
+      </button>
+      <button class="tab-button" data-tab="scissor-lifts">
+        <img src="eyecons/scissor-tab.png" alt="Scissor Lifts" class="tab-icon">
+        <span class="tab-label">Scissor Lifts</span>
+      </button>
+      <button class="tab-button" data-tab="vehicles">
+        <img src="eyecons/vehicle-tab.png" alt="Vehicles" class="tab-icon">
+        <span class="tab-label">Vehicles</span>
+      </button>
+      <button class="tab-button" data-tab="qr-booking">
+        <img src="eyecons/qr-tab.png" alt="QR Booking" class="tab-icon">
+        <span class="tab-label">QR Booking</span>
+      </button>
+      <button class="tab-button" data-tab="about">
+        <img src="eyecons/about-tab.png" alt="About" class="tab-icon">
+        <span class="tab-label">About</span>
+      </button>
+    </nav>
+
+    <!-- Slider Panel -->
+    <div class="slider" id="slider">
+      <button class="slider-close" id="slider-close">&times;</button>
+      <h2 class="slider-title" id="slider-title"></h2>
+      <div class="slider-content" id="slider-content"></div>
     </div>
   </div>
-</section>
- 
-	  
-
-
-    <section id="vehicles" class="tab-content">
-      <h2>Vehicles</h2>
-      <div id="vehicles-list" class="resource-list"></div>
-    </section>
-    <section id="about" class="tab-content">
-      <h2>Version 1.0</h2>
-      <p>Initial testing release.</p>
-		<br />
-		<h2>Upcoming version plans</h2>
-		<p>Add R&D Vehicles</p>
-		<p>Ability to book from the app</p>
-		<p>Push alerts for resource availability and upcoming bookings</p>
-		<p>Clean up visuals and make it look pretty</p>
-    </section>
-  </div>
-
-	
-	
-	
-	
-	
-  <!-- Tab Navigation -->
-  <nav class="tab-bar">
-    <button class="tab-button" data-tab="home">Home</button>
-    <button class="tab-button" data-tab="scissor-lifts">Scissor Lifts</button>
-    <button class="tab-button" data-tab="vehicles">Vehicles</button>
-    <button class="tab-button" data-tab="about">About</button>
-  </nav>
 </body>
 </html>

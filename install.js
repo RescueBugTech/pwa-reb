@@ -4,17 +4,14 @@ const previouslyInstalled = localStorage.getItem('pwaInstalled');
 const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
 document.addEventListener('DOMContentLoaded', () => {
-  // If PWA is running in standalone mode, mark as installed
   if (isStandalone) {
     localStorage.setItem('pwaInstalled', 'true');
   }
 
-  // If previously installed but not currently in standalone, remind to open from PWA
   if (previouslyInstalled && !isStandalone) {
     showReminderBanner();
   }
 
-  // If on iOS Safari and not standalone, show instructions for Add to Home Screen
   if (isIOS && !isStandalone && !previouslyInstalled) {
     showIOSInstructions();
   }
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Only show install prompt if not installed
   if (!isStandalone) {
     showInstallPrompt();
   }
