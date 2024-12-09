@@ -147,6 +147,14 @@ function getTimeRange() {
 
 
 
+// Make the refresh function globally accessible
+window.refreshResources = async function() {
+  await getResourceStatus();
+};
+
+
+
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('Service worker registered'))
