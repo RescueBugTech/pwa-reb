@@ -183,3 +183,28 @@ html, body {
   background-size: cover;
   vertical-align: middle;
 }
+
+.scissor-lifts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.refresh-button:hover .refresh-icon {
+  filter: brightness(0.8);
+}
+
+.refresh-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
