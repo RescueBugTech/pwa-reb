@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const refreshButton = document.createElement('button');
       refreshButton.className = 'refresh-button';
-      refreshButton.innerHTML = '<img src="icons/refresh.svg" alt="Refresh" class="refresh-icon">';
+      refreshButton.innerHTML = '<img src="eyecons/refresh.png" alt="Refresh" class="refresh-icon">';
       refreshButton.addEventListener('click', async () => {
         await window.refreshResources();
         populateSliderContent('scissor-lifts');
