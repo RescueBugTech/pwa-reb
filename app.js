@@ -1,14 +1,15 @@
 // MSAL.js Configuration
 const msalConfig = {
   auth: {
-    clientId: '896e65ec-f48b-43cc-8dd0-584d153b8622', 
-    authority: 'https://login.microsoftonline.com/98c82fc2-43b4-41ec-9b19-c979102344da', 
-    redirectUri: window.location.href
+    clientId: '896e65ec-f48b-43cc-8dd0-584d153b8622',
+    authority: 'https://login.microsoftonline.com/98c82fc2-43b4-41ec-9b19-c979102344da',
+    redirectUri: 'https://rescuebugtech.github.io/pwa-reb/index.html'
   },
 };
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
+// Handle redirect sign-in response
 msalInstance.handleRedirectPromise()
   .then((response) => {
     if (response) {
@@ -18,64 +19,113 @@ msalInstance.handleRedirectPromise()
       getResourceStatus();
       promptForBiometricEnrollment();
     } else {
+      // No token from redirect, try silent token acquisition or sign-in
       authenticateWithBiometrics();
     }
   })
   .catch((error) => {
     console.error('Redirect login failed:', error);
+    signIn();
   });
 
+// Function to sign in interactively (if silent fails)
 function signIn() {
   msalInstance.loginRedirect({
     scopes: ['User.Read', 'Calendars.Read.Shared']
   });
 }
 
+// Store token after login
 function storeToken(token) {
   localStorage.setItem("msalAccessToken", token);
 }
 
-function promptForBiometricEnrollment() {
-  console.warn("Biometric enrollment prompt stub (Cordova not used here).");
-}
+// Try silent token acquisition first, fallback to sign-in if it fails
+async function ensureToken() {
+  let token = localStorage.getItem("msalAccessToken");
 
-async function authenticateWithBiometrics() {
-  const token = localStorage.getItem("msalAccessToken");
-  if (token) {
-    displayUserName();
-    getResourceStatus();
-  } else {
-    signIn();
-  }
-}
-
-async function getToken() {
-  const token = localStorage.getItem("msalAccessToken");
   if (!token) {
-    console.warn("No token found, user needs to sign in.");
+    // No token stored locally, try silent acquisition
+    try {
+      const silentResult = await msalInstance.acquireTokenSilent({
+        scopes: ['User.Read', 'Calendars.Read.Shared'],
+        account: msalInstance.getActiveAccount()
+      });
+      if (silentResult && silentResult.accessToken) {
+        storeToken(silentResult.accessToken);
+        return silentResult.accessToken;
+      } else {
+        // Silent failed; prompt interactive sign-in
+        signIn();
+        return null;
+      }
+    } catch (silentError) {
+      console.warn("Silent token acquisition failed:", silentError);
+      signIn();
+      return null;
+    }
+  }
+
+  // If we have a token, optionally check if it's still valid. Normally, acquireTokenSilent handles refresh.
+  return token;
+}
+
+// Get token, ensuring it's valid or re-acquired
+async function getToken() {
+  const token = await ensureToken();
+  if (!token) {
+    console.warn("No valid token found, user may need to sign in.");
     return null;
   }
   return token;
 }
 
+// Prompt for Biometric Enrollment (Stub for now)
+function promptForBiometricEnrollment() {
+  console.warn("Biometric enrollment prompt stub.");
+}
+
+// Authenticate with biometrics if available, otherwise sign in
+async function authenticateWithBiometrics() {
+  const token = await ensureToken();
+  if (token) {
+    displayUserName();
+    getResourceStatus();
+  } else {
+    // ensureToken() already tries signIn if it fails silently
+  }
+}
+
+// Display the signed-in user's name
 async function displayUserName() {
-  const token = await getToken();
+  let token = await getToken();
   if (!token) return;
 
   try {
     const response = await fetch('https://graph.microsoft.com/v1.0/me', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const userData = await response.json();
-    document.getElementById('user-name').textContent = `Welcome, ${userData.displayName}!`;
-    window.userName = userData.displayName;
+
+    if (response.ok) {
+      const userData = await response.json();
+      document.getElementById('user-name').textContent = `Welcome, ${userData.displayName}!`;
+      window.userName = userData.displayName;
+    } else if (response.status === 401) {
+      // If unauthorized, token may be invalid, clear and retry
+      localStorage.removeItem("msalAccessToken");
+      await ensureToken();
+      await displayUserName(); // retry once
+    } else {
+      console.error('Failed to fetch user profile:', response.status, response.statusText);
+    }
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
   }
 }
 
+// Fetch resource status for scissor lifts
 async function getResourceStatus() {
-  const token = await getToken();
+  let token = await getToken();
   if (!token) return;
 
   const scissorLifts = [
@@ -91,9 +141,7 @@ async function getResourceStatus() {
     try {
       const response = await fetch(
         `https://graph.microsoft.com/v1.0/users/${lift.email}/calendar/calendarView?startDateTime=${start}&endDateTime=${end}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.ok) {
@@ -109,6 +157,11 @@ async function getResourceStatus() {
           };
         }
         liftsData.push({ ...lift, isBooked, bookingInfo });
+      } else if (response.status === 401) {
+        // Token invalid, retry token acquisition
+        localStorage.removeItem("msalAccessToken");
+        await ensureToken();
+        return getResourceStatus(); // retry once
       } else {
         console.error(`Failed to fetch data for ${lift.name}:`, response.statusText);
       }
@@ -119,7 +172,7 @@ async function getResourceStatus() {
 
   window.scissorLiftsData = liftsData;
 
-  // For vehicles, let's mock data as in the previous example
+  // Mock vehicles data
   const vehicles = [
     { name: 'Truck 1', status: 'available' },
     { name: 'Van 1', status: 'booked' },
@@ -128,11 +181,12 @@ async function getResourceStatus() {
   window.vehiclesData = vehicles;
 }
 
+// Helper functions
 function formatTime(dateString) {
   const utcDate = new Date(dateString);
   const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
   return localDate.toLocaleTimeString([], {
-    hour: 'numeric',  
+    hour: 'numeric',
     minute: '2-digit',
     hour12: true
   });
@@ -145,14 +199,10 @@ function getTimeRange() {
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
-
-
-// Make the refresh function globally accessible
+// Expose refreshResources so that ui.js can call it
 window.refreshResources = async function() {
   await getResourceStatus();
 };
-
-
 
 
 if ('serviceWorker' in navigator) {
