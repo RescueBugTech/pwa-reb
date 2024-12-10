@@ -31,7 +31,7 @@ msalInstance.handleRedirectPromise()
 // Function to sign in interactively (if silent fails)
 function signIn() {
   msalInstance.loginRedirect({
-    scopes: ['User.Read', 'Calendars.Read.Shared', 'Calendars.ReadWrite']
+    scopes: ['User.Read', 'Calendars.Read.Shared']
   });
 }
 
@@ -48,7 +48,7 @@ async function ensureToken() {
     // No token stored locally, try silent acquisition
     try {
       const silentResult = await msalInstance.acquireTokenSilent({
-        scopes: ['User.Read', 'Calendars.Read.Shared', 'Calendars.ReadWrite'],
+        scopes: ['User.Read', 'Calendars.Read.Shared'],
         account: msalInstance.getActiveAccount()
       });
       if (silentResult && silentResult.accessToken) {
@@ -66,6 +66,7 @@ async function ensureToken() {
     }
   }
 
+  // If we have a token, optionally check if it's still valid. Normally, acquireTokenSilent handles refresh.
   return token;
 }
 
@@ -90,6 +91,8 @@ async function authenticateWithBiometrics() {
   if (token) {
     displayUserName();
     getResourceStatus();
+  } else {
+    // ensureToken() already tries signIn if it fails silently
   }
 }
 
@@ -150,8 +153,7 @@ async function getResourceStatus() {
           bookingInfo = {
             organizer: event.organizer.emailAddress.name,
             start: formatTime(event.start.dateTime),
-            end: formatTime(event.end.dateTime),
-            eventId: event.id // Store the event ID for cancellation
+            end: formatTime(event.end.dateTime)
           };
         }
         liftsData.push({ ...lift, isBooked, bookingInfo });
@@ -202,109 +204,10 @@ window.refreshResources = async function() {
   await getResourceStatus();
 };
 
-// -----------------------------
-// Booking and Canceling (Pseudo Code)
-// -----------------------------
 
-// Book Resource
-// resourceId will be the resource's email (e.g. 'ScissorLiftMOLD@rescue.com')
-window.bookResource = async function(resourceId) {
-  const token = await getToken();
-  if (!token) return false;
-
-  // For booking, we'll create a new event in the resource's calendar using Graph.
-  // We'll book it starting now for the next hour, similar to getResourceStatus.
-  const { start, end } = getTimeRange();
-  const subject = `Booking by ${window.userName}`;
-
-  const eventBody = {
-    subject: subject,
-    start: { dateTime: start, timeZone: 'UTC' },
-    end: { dateTime: end, timeZone: 'UTC' },
-    attendees: [
-      {
-        emailAddress: {
-          address: resourceId,
-          name: resourceId
-        },
-        type: "resource"
-      }
-    ]
-  };
-
-  try {
-    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceId}/events`, {
-      method: 'POST',
-      headers: { 
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(eventBody)
-    });
-
-    if (response.ok) {
-      console.log('Resource booked successfully.');
-      return true;
-    } else {
-      console.error('Booking failed:', await response.text());
-      return false;
-    }
-
-  } catch (error) {
-    console.error('Error booking resource:', error);
-    return false;
-  }
-};
-
-// Cancel Booking
-// We assume we have the eventId from the resource’s bookingInfo.
-window.cancelBooking = async function(resourceId) {
-  const token = await getToken();
-  if (!token) return false;
-
-  // Find the resource in window.scissorLiftsData to get eventId
-  const resource = (window.scissorLiftsData || []).find(r => r.email === resourceId);
-  if (!resource || !resource.bookingInfo || !resource.bookingInfo.eventId) {
-    console.warn('No booking found for this resource or missing eventId.');
-    return false;
-  }
-
-  const eventId = resource.bookingInfo.eventId;
-
-  try {
-    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceId}/events/${eventId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (response.ok) {
-      console.log('Booking cancelled successfully.');
-      return true;
-    } else {
-      console.error('Cancellation failed:', await response.text());
-      return false;
-    }
-  } catch (error) {
-    console.error('Error canceling booking:', error);
-    return false;
-  }
-};
-
-// Toggle Notifications
-// For now, we simply store user preference in localStorage. 
-// Later, you might integrate this with a backend or push subscription service.
-window.toggleNotify = async function(resourceId, shouldNotify) {
-  const notifyKey = `notify_${resourceId}`;
-  localStorage.setItem(notifyKey, shouldNotify ? 'true' : 'false');
-  console.log(`Notification preference for ${resourceId} set to ${shouldNotify}`);
-  return true;
-};
-
-// If a service worker is available, register it
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('Service worker registered'))
     .catch(console.error);
 }
+

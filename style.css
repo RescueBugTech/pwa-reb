@@ -122,7 +122,6 @@ html, body {
   margin-bottom: 8px;
 }
 
-/* QR Box */
 .slider-content .qr-box {
   display: flex;
   justify-content: center;
@@ -135,7 +134,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* PWA Install Banners */
+/* PWA Install Banners (from previous steps) */
 .pwa-banner {
   position: fixed;
   bottom: 20px;
@@ -209,11 +208,15 @@ html, body {
   background: none;
 }
 
+
+
 .refresh-icon {
   width: 25px;
   height: 25px;
   vertical-align: middle;
 }
+
+
 
 .resource-status {
   display: inline-block;
@@ -231,56 +234,3 @@ html, body {
   background-color: red;
 }
 
-/* Added for expanded resource details */
-.resource-item {
-  position: relative;
-  cursor: pointer;  
-}
-
-.resource-details {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  margin-top: 8px; /* space above details */
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 8px;
-}
-
-.resource-item.expanded .resource-details {
-  max-height: 300px; /* Large enough to show details */
-}
-
-.resource-details button {
-  display: inline-block;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  border-radius: 4px;
-  border: none;
-  background: #0078D4;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.resource-details button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #aaa;
-  border: none;
-}
-
-.resource-details label {
-  display: inline-block;
-  margin-bottom: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.resource-details input[type="checkbox"] {
-  margin-right: 5px;
-  transform: scale(1.2);
-  vertical-align: middle;
-}
