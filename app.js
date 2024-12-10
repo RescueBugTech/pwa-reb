@@ -222,15 +222,14 @@ window.bookResource = async function(resourceId) {
     attendees: [
       {
         emailAddress: {
-          address: resourceId
+          address: resourceId // Treating this like a user mailbox
         },
-        type: "resource"
+        type: "required" // Instead of "resource"
       }
     ]
   };
 
   try {
-    // Create the event in the user's own calendar
     const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
       method: 'POST',
       headers: { 
@@ -241,21 +240,21 @@ window.bookResource = async function(resourceId) {
     });
 
     if (response.ok) {
-      console.log('Event created in user’s calendar with resource invited.');
-      // Optionally, parse the response to get the event ID if you need to cancel later
+      console.log('Event created on user’s calendar with scissor lift invited as a regular attendee.');
       const eventData = await response.json();
-      // If needed, store eventData.id somewhere to cancel it later
+      // If needed, store eventData.id for cancellation purposes
       return true;
     } else {
-      console.error('Booking failed:', await response.text());
+      const errorText = await response.text();
+      console.error('Booking failed:', errorText);
       return false;
     }
-
   } catch (error) {
     console.error('Error booking resource:', error);
     return false;
   }
 };
+
 
 
 // Cancel Booking
