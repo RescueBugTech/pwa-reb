@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setActiveTab(tabId) {
     tabs.forEach((t) => t.classList.remove('active'));
-    const currentTab = document.querySelector(.tab-button[data-tab="${tabId}"]);
+    const currentTab = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
     if (currentTab) currentTab.classList.add('active');
   }
 
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabId === 'home') {
       const name = window.userName || 'User';
       const p = document.createElement('p');
-      p.textContent = Hello, ${name}. Select a tab to get started.;
+      p.textContent = `Hello, ${name}. Select a tab to get started.`;
       sliderContent.appendChild(p);
 
     } else if (tabId === 'scissor-lifts') {
@@ -70,11 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lift.isBooked && lift.bookingInfo) {
           statusSpan.classList.add('booked');
           li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}));
+          li.appendChild(document.createTextNode(`${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}`));
         } else {
           statusSpan.classList.add('available');
           li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(${lift.name}: Available));
+          li.appendChild(document.createTextNode(`${lift.name}: Available`));
         }
         ul.appendChild(li);
       });
@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (vehicle.status === 'available') {
           statusSpan.classList.add('available');
           li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(${vehicle.name}: Available));
+          li.appendChild(document.createTextNode(`${vehicle.name}: Available`));
         } else {
           statusSpan.classList.add('booked');
           li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(${vehicle.name}: Booked));
+          li.appendChild(document.createTextNode(`${vehicle.name}: Booked`));
         }
 
         ul.appendChild(li);
