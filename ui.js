@@ -94,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // Available to book
       bookButton.addEventListener('click', async () => {
-	    e.stopPropagation(); // <-- Add this line
         await window.bookResource(lift.id);
         await window.refreshResources();
         populateSliderContent('scissor-lifts');
@@ -102,47 +101,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     detailsContainer.appendChild(bookButton);
 
-    // CANCEL BUTTON
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancel your booking';
-    if (lift.isBooked && lift.bookingInfo.organizer === window.userName) {
-      // User booked this lift, allow cancel
-      cancelButton.disabled = false;
-      cancelButton.addEventListener('click', async () => {
-    	e.stopPropagation(); // <-- Add this line
-        await window.cancelBooking(lift.id);
-        await window.refreshResources();
-        populateSliderContent('scissor-lifts');
-      });
+// CANCEL BUTTON
+const cancelButton = document.createElement('button');
+cancelButton.textContent = 'Cancel your booking';
+if (lift.isBooked && lift.bookingInfo.organizer === window.userName) {
+  // User booked this lift, allow cancel
+  cancelButton.disabled = false;
+  cancelButton.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+    const success = await window.cancelBooking(lift.email);
+    if (success) {
+      await window.refreshResources();
+      populateSliderContent('scissor-lifts');
     } else {
-      // Not booked by current user; disable
-      cancelButton.disabled = true;
+      console.error('Cancellation failed.');
     }
-    detailsContainer.appendChild(cancelButton);
+  });
+} else {
+  // Not booked by current user; disable
+  cancelButton.disabled = true;
+}
+detailsContainer.appendChild(cancelButton);
 
-    // NOTIFY ME CHECKBOX
-    // Only meaningful if currently booked by someone else. If available, no need for notifications.
-    const notifyLabel = document.createElement('label');
-    notifyLabel.textContent = 'Notify me when available';
 
-    const notifyCheckbox = document.createElement('input');
-    notifyCheckbox.type = 'checkbox';
+// NOTIFY ME CHECKBOX
+const notifyLabel = document.createElement('label');
+notifyLabel.textContent = 'Notify me when available';
 
-    // If the item is currently booked by someone else, user may want notification
-    if (lift.isBooked && lift.bookingInfo.organizer !== window.userName) {
-      notifyCheckbox.disabled = false;
-      // On change, record user’s preference
-      notifyCheckbox.addEventListener('change', async (e) => {
-    	e.stopPropagation(); // <-- Add this line
-        await window.toggleNotify(lift.id, e.target.checked);
-      });
-    } else {
-      // If it's available or booked by the user, no need to notify
-      notifyCheckbox.disabled = true;
+const notifyCheckbox = document.createElement('input');
+notifyCheckbox.type = 'checkbox';
+
+if (lift.isBooked && lift.bookingInfo.organizer !== window.userName) {
+  // Item is booked by someone else, user can opt-in for notification
+  notifyCheckbox.disabled = false;
+  notifyCheckbox.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+  });
+
+  notifyCheckbox.addEventListener('change', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+    const checked = e.target.checked;
+    const success = await window.toggleNotify(lift.email, checked);
+    if (!success) {
+      console.error('Notification toggle failed.');
     }
+  });
+} else {
+  // If it's available or booked by the user, no need to notify
+  notifyCheckbox.disabled = true;
+}
 
-    notifyLabel.prepend(notifyCheckbox);
-    detailsContainer.appendChild(notifyLabel);
+notifyLabel.prepend(notifyCheckbox);
+detailsContainer.appendChild(notifyLabel);
+
 
     li.appendChild(detailsContainer);
 
@@ -159,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sliderContent.appendChild(ul);
 }
-
  else if (tabId === 'vehicles') {
       const h3 = document.createElement('h3');
       h3.textContent = 'Vehicles';
