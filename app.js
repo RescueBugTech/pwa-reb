@@ -212,8 +212,6 @@ window.bookResource = async function(resourceId) {
   const token = await getToken();
   if (!token) return false;
 
-  // For booking, we'll create a new event in the resource's calendar using Graph.
-  // We'll book it starting now for the next hour, similar to getResourceStatus.
   const { start, end } = getTimeRange();
   const subject = `Booking by ${window.userName}`;
 
@@ -224,8 +222,7 @@ window.bookResource = async function(resourceId) {
     attendees: [
       {
         emailAddress: {
-          address: resourceId,
-          name: resourceId
+          address: resourceId
         },
         type: "resource"
       }
@@ -233,7 +230,8 @@ window.bookResource = async function(resourceId) {
   };
 
   try {
-    const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceId}/events`, {
+    // Create the event in the user's own calendar
+    const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
       method: 'POST',
       headers: { 
         Authorization: `Bearer ${token}`,
@@ -243,7 +241,10 @@ window.bookResource = async function(resourceId) {
     });
 
     if (response.ok) {
-      console.log('Resource booked successfully.');
+      console.log('Event created in user’s calendar with resource invited.');
+      // Optionally, parse the response to get the event ID if you need to cancel later
+      const eventData = await response.json();
+      // If needed, store eventData.id somewhere to cancel it later
       return true;
     } else {
       console.error('Booking failed:', await response.text());
@@ -255,6 +256,7 @@ window.bookResource = async function(resourceId) {
     return false;
   }
 };
+
 
 // Cancel Booking
 // We assume we have the eventId from the resource’s bookingInfo.
