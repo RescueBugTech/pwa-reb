@@ -160,6 +160,7 @@ notifyLabel.prepend(notifyCheckbox);
 detailsContainer.appendChild(notifyLabel);
 
 
+
     li.appendChild(detailsContainer);
 
     // Add a click event to toggle visibility of detailsContainer
