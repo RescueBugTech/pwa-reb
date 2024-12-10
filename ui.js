@@ -85,21 +85,26 @@ document.addEventListener('DOMContentLoaded', () => {
     detailsContainer.className = 'resource-details';
     // Initially hidden. You can manage show/hide with CSS classes.
     
-    // BOOK BUTTON
-    const bookButton = document.createElement('button');
-    bookButton.textContent = 'Book this asset';
-    if (lift.isBooked) {
-      // If already booked by someone else, disable
-      bookButton.disabled = true;
+// BOOK BUTTON
+const bookButton = document.createElement('button');
+bookButton.textContent = 'Book this asset';
+if (lift.isBooked) {
+  // If already booked by someone else, disable
+  bookButton.disabled = true;
+} else {
+  bookButton.addEventListener('click', async (e) => {
+    e.stopPropagation(); // <-- Add this line
+    const success = await window.bookResource(lift.email);
+    if (success) {
+      await window.refreshResources();
+      populateSliderContent('scissor-lifts');
     } else {
-      // Available to book
-      bookButton.addEventListener('click', async () => {
-        await window.bookResource(lift.id);
-        await window.refreshResources();
-        populateSliderContent('scissor-lifts');
-      });
+      console.error('Booking failed.');
     }
-    detailsContainer.appendChild(bookButton);
+  });
+}
+detailsContainer.appendChild(bookButton);
+
 
 // CANCEL BUTTON
 const cancelButton = document.createElement('button');
