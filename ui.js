@@ -86,64 +86,74 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initially hidden. You can manage show/hide with CSS classes.
     
     // BOOK BUTTON
-const bookButton = document.createElement('button');
-bookButton.textContent = 'Book this asset';
-if (lift.isBooked) {
-  // If already booked by someone else, disable
-  bookButton.disabled = true;
-} else {
-  bookButton.addEventListener('click', async (e) => {
-    e.stopPropagation(); // <-- Add this line
-    const success = await window.bookResource(lift.email);
+    const bookButton = document.createElement('button');
+    bookButton.textContent = 'Book this asset';
+    if (lift.isBooked) {
+      // If already booked by someone else, disable
+      bookButton.disabled = true;
+    } else {
+      // Available to book
+      bookButton.addEventListener('click', async () => {
+        await window.bookResource(lift.id);
+        await window.refreshResources();
+        populateSliderContent('scissor-lifts');
+      });
+    }
+    detailsContainer.appendChild(bookButton);
+
+// CANCEL BUTTON
+const cancelButton = document.createElement('button');
+cancelButton.textContent = 'Cancel your booking';
+if (lift.isBooked && lift.bookingInfo.organizer === window.userName) {
+  // User booked this lift, allow cancel
+  cancelButton.disabled = false;
+  cancelButton.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+    const success = await window.cancelBooking(lift.email);
     if (success) {
       await window.refreshResources();
       populateSliderContent('scissor-lifts');
     } else {
-      console.error('Booking failed.');
+      console.error('Cancellation failed.');
     }
   });
+} else {
+  // Not booked by current user; disable
+  cancelButton.disabled = true;
 }
-detailsContainer.appendChild(bookButton);
+detailsContainer.appendChild(cancelButton);
 
-    // CANCEL BUTTON
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancel your booking';
-    if (lift.isBooked && lift.bookingInfo.organizer === window.userName) {
-      // User booked this lift, allow cancel
-      cancelButton.disabled = false;
-      cancelButton.addEventListener('click', async () => {
-        await window.cancelBooking(lift.id);
-        await window.refreshResources();
-        populateSliderContent('scissor-lifts');
-      });
-    } else {
-      // Not booked by current user; disable
-      cancelButton.disabled = true;
+
+// NOTIFY ME CHECKBOX
+const notifyLabel = document.createElement('label');
+notifyLabel.textContent = 'Notify me when available';
+
+const notifyCheckbox = document.createElement('input');
+notifyCheckbox.type = 'checkbox';
+
+if (lift.isBooked && lift.bookingInfo.organizer !== window.userName) {
+  // Item is booked by someone else, user can opt-in for notification
+  notifyCheckbox.disabled = false;
+  notifyCheckbox.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+  });
+
+  notifyCheckbox.addEventListener('change', async (e) => {
+    e.stopPropagation(); // Prevent closing the expanded section
+    const checked = e.target.checked;
+    const success = await window.toggleNotify(lift.email, checked);
+    if (!success) {
+      console.error('Notification toggle failed.');
     }
-    detailsContainer.appendChild(cancelButton);
+  });
+} else {
+  // If it's available or booked by the user, no need to notify
+  notifyCheckbox.disabled = true;
+}
 
-    // NOTIFY ME CHECKBOX
-    // Only meaningful if currently booked by someone else. If available, no need for notifications.
-    const notifyLabel = document.createElement('label');
-    notifyLabel.textContent = 'Notify me when available';
+notifyLabel.prepend(notifyCheckbox);
+detailsContainer.appendChild(notifyLabel);
 
-    const notifyCheckbox = document.createElement('input');
-    notifyCheckbox.type = 'checkbox';
-
-    // If the item is currently booked by someone else, user may want notification
-    if (lift.isBooked && lift.bookingInfo.organizer !== window.userName) {
-      notifyCheckbox.disabled = false;
-      // On change, record user’s preference
-      notifyCheckbox.addEventListener('change', async (e) => {
-        await window.toggleNotify(lift.id, e.target.checked);
-      });
-    } else {
-      // If it's available or booked by the user, no need to notify
-      notifyCheckbox.disabled = true;
-    }
-
-    notifyLabel.prepend(notifyCheckbox);
-    detailsContainer.appendChild(notifyLabel);
 
     li.appendChild(detailsContainer);
 
