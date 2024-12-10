@@ -198,11 +198,14 @@ html, body {
   padding: 4px;
   outline: none; /* Remove outline for desktop browsers */
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+  user-select: none;
 }
 
-.refresh-button:focus {
+.refresh-button:focus,
+.refresh-button:active {
   outline: none;
   box-shadow: none;
+  background: none;
 }
 
 .refresh-button:hover .refresh-icon {
