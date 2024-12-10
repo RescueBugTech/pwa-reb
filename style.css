@@ -196,6 +196,13 @@ html, body {
   border: none;
   cursor: pointer;
   padding: 4px;
+  outline: none; /* Remove outline for desktop browsers */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+}
+
+.refresh-button:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .refresh-button:hover .refresh-icon {
