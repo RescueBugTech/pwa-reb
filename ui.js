@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.classList.remove('open');
   }
 
+	
+	
+	
+	
+	
  function populateSliderContent(tabId) {
   sliderTitle.textContent = tabId.replace('-', ' ');
   sliderContent.innerHTML = '';
@@ -42,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     p.textContent = `Hello, ${name}. Select a tab to get started.`;
     sliderContent.appendChild(p);
   } else if (tabId === 'scissor-lifts') {
+    // Create a container for the heading and the refresh button
     const headingContainer = document.createElement('div');
     headingContainer.className = 'scissor-lifts-header';
 
@@ -50,9 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const refreshButton = document.createElement('button');
     refreshButton.className = 'refresh-button';
-    refreshButton.innerHTML = '<img src="eyecons/refresh.png" alt="Refresh" class="refresh-icon">';
+    refreshButton.innerHTML = '<img src="icons/refresh.svg" alt="Refresh" class="refresh-icon">';
     refreshButton.addEventListener('click', async () => {
+      // Re-fetch data
       await window.refreshResources();
+      // Update the displayed content after refresh
       populateSliderContent('scissor-lifts');
     });
 
@@ -63,17 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const ul = document.createElement('ul');
     (window.scissorLiftsData || []).forEach(lift => {
       const li = document.createElement('li');
-      const statusSpan = document.createElement('span');
-      statusSpan.classList.add('resource-status');
-
       if (lift.isBooked && lift.bookingInfo) {
-        statusSpan.classList.add('booked');
-        li.appendChild(statusSpan);
-        li.appendChild(document.createTextNode(`${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}`));
+        li.textContent = `${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}`;
       } else {
-        statusSpan.classList.add('available');
-        li.appendChild(statusSpan);
-        li.appendChild(document.createTextNode(`${lift.name}: Available`));
+        li.textContent = `${lift.name}: Available`;
       }
       ul.appendChild(li);
     });
@@ -85,19 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ul = document.createElement('ul');
     (window.vehiclesData || []).forEach(vehicle => {
       const li = document.createElement('li');
-      const statusSpan = document.createElement('span');
-      statusSpan.classList.add('resource-status');
-
-      if (vehicle.status === 'available') {
-        statusSpan.classList.add('available');
-        li.appendChild(statusSpan);
-        li.appendChild(document.createTextNode(`${vehicle.name}: Available`));
-      } else {
-        statusSpan.classList.add('booked');
-        li.appendChild(statusSpan);
-        li.appendChild(document.createTextNode(`${vehicle.name}: Booked`));
-      }
-
+      li.textContent = `${vehicle.name}: ${vehicle.status === 'available' ? 'Available' : 'Booked'}`;
       ul.appendChild(li);
     });
     sliderContent.appendChild(ul);
@@ -144,4 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 
+	
+	
+	
+	
 });
