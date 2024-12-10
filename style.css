@@ -208,9 +208,7 @@ html, body {
   background: none;
 }
 
-.refresh-button:hover .refresh-icon {
-  filter: brightness(0.8);
-}
+
 
 .refresh-icon {
   width: 25px;
