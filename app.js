@@ -207,13 +207,48 @@ async function openBookingModal(lift) {
     end: new Date(booking.end),
   }));
 
-  // Create a native date-time picker
+  // Clear existing modal content
+  const modalContent = document.getElementById('slider-content');
+  modalContent.innerHTML = '';
+
+  // Add Back button
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back';
+  backButton.className = 'back-button';
+  backButton.addEventListener('click', () => {
+    populateSliderContent('scissor-lifts');
+  });
+  modalContent.appendChild(backButton);
+
+  // Add title
+  const title = document.createElement('h3');
+  title.textContent = `Book ${lift.name}`;
+  modalContent.appendChild(title);
+
+  // Add date pickers
+  const startTimeLabel = document.createElement('label');
+  startTimeLabel.textContent = 'Start Time';
   const startTimePicker = document.createElement('input');
   startTimePicker.type = 'datetime-local';
+  startTimePicker.className = 'date-picker';
+
+  const toLabel = document.createElement('span');
+  toLabel.textContent = ' to ';
+  toLabel.style.display = 'block'; // Inline-block for alignment
+
+  const endTimeLabel = document.createElement('label');
+  endTimeLabel.textContent = 'End Time';
   const endTimePicker = document.createElement('input');
   endTimePicker.type = 'datetime-local';
+  endTimePicker.className = 'date-picker';
 
-  // Filter out blocked times
+  modalContent.appendChild(startTimeLabel);
+  modalContent.appendChild(startTimePicker);
+  modalContent.appendChild(toLabel);
+  modalContent.appendChild(endTimeLabel);
+  modalContent.appendChild(endTimePicker);
+
+  // Block unavailable times
   startTimePicker.addEventListener('change', () => {
     const selectedStart = new Date(startTimePicker.value);
     if (blockedTimes.some(({ start, end }) => selectedStart >= start && selectedStart < end)) {
@@ -222,14 +257,18 @@ async function openBookingModal(lift) {
     }
   });
 
-  // Append the pickers and buttons to the modal
-  const modalContent = document.getElementById('slider-content');
-  modalContent.innerHTML = '';
-  modalContent.appendChild(startTimePicker);
-  modalContent.appendChild(endTimePicker);
+  endTimePicker.addEventListener('change', () => {
+    const selectedEnd = new Date(endTimePicker.value);
+    if (blockedTimes.some(({ start, end }) => selectedEnd > start && selectedEnd <= end)) {
+      alert('Selected time overlaps with an existing booking.');
+      endTimePicker.value = ''; // Reset value
+    }
+  });
 
+  // Add confirm button
   const confirmButton = document.createElement('button');
   confirmButton.textContent = 'Confirm Booking';
+  confirmButton.className = 'action-buttons';
   confirmButton.addEventListener('click', async () => {
     const start = startTimePicker.value;
     const end = endTimePicker.value;
@@ -239,7 +278,7 @@ async function openBookingModal(lift) {
     }
     await createBooking(lift.email, start, end);
     alert('Booking confirmed!');
-    closeSlider();
+    populateSliderContent('scissor-lifts');
   });
   modalContent.appendChild(confirmButton);
 }
