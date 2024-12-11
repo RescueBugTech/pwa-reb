@@ -328,7 +328,7 @@ async function createBooking(resourceEmail, start, end) {
   return true;
 }
 
-window.populateSliderContent = populateSliderContent;
+
 
 
 // Expose refreshResources so that ui.js can call it
