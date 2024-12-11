@@ -311,8 +311,8 @@ async function createBooking(resourceEmail, start, end) {
 
   const event = {
     subject: 'Scissor Lift Booking', // Customize subject if needed
-    start: { dateTime: start, timeZone: 'UTC' },
-    end: { dateTime: end, timeZone: 'UTC' },
+    start: { dateTime: start, timeZone: 'PST' },
+    end: { dateTime: end, timeZone: 'PST' },
     attendees: [
       {
         emailAddress: { address: resourceEmail, name: 'Scissor Lift' }, // Add the Scissor Lift as an attendee
