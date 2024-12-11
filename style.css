@@ -232,18 +232,18 @@ html, body {
 
 /* Style for action buttons */
 .action-buttons button {
-  font-size: 1.2rem;
-  padding: 12px 20px;
+  font-size: .8rem;
+  padding: 10px 16px;
   margin: 10px 0;
-  border-radius: 8px;
-  background-color: #0078D4;
+  border-radius: 7px;
+  background-color: #00849E;
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
 .action-buttons button:hover:enabled {
-  background-color: #005a9e;
+  background-color: #00849E;
 }
 
 .action-buttons button:disabled {
@@ -254,10 +254,10 @@ html, body {
 
 /* Style for Back button */
 .back-button {
-  font-size: 1.2rem;
-  padding: 12px 20px;
+  font-size: .8rem;
+  padding: 10px 16px;
   margin: 10px 0;
-  border-radius: 8px;
+  border-radius: 7px;
   background-color: #ccc;
   color: #333;
   border: none;
@@ -271,9 +271,9 @@ html, body {
 /* Style for date pickers */
 .date-picker {
   width: 100%;
-  font-size: 1.2rem;
+  font-size: .8rem;
   padding: 10px;
   margin: 10px 0;
-  border-radius: 8px;
+  border-radius: 7px;
   border: 1px solid #ddd;
 }
