@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabs = document.querySelectorAll('.tab-button');
   const slider = document.getElementById('slider');
   const sliderTitle = document.getElementById('slider-title');
+  const sliderImage = document.getElementById('tab-icon');
   const sliderContent = document.getElementById('slider-content');
   const sliderClose = document.getElementById('slider-close');
 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function populateSliderContent(tabId) {
-    sliderTitle.textContent = tabId.replace('-', ' ');
+    sliderImage.innerHTML = '';
     sliderContent.innerHTML = '';
 
     if (tabId === 'home') {
