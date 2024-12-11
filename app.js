@@ -216,7 +216,7 @@ async function openBookingModal(lift) {
   backButton.textContent = 'Back';
   backButton.className = 'back-button';
   backButton.addEventListener('click', () => {
-    navigateToTab('scissor-lifts');
+    populateSliderContent('scissor-lifts');
   });
   modalContent.appendChild(backButton);
 

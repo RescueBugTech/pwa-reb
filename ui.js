@@ -182,10 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function navigateToTab(tabId) {
-  populateSliderContent(tabId);
-}
-window.navigateToTab = navigateToTab;
 
 
 window.populateSliderContent = populateSliderContent;
