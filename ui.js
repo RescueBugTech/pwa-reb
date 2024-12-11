@@ -182,6 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function navigateToTab(tabId) {
+  populateSliderContent(tabId);
+}
+window.navigateToTab = navigateToTab;
+
 
 window.populateSliderContent = populateSliderContent;
 console.log('populateSliderContent has been assigned to window:', typeof window.populateSliderContent);
