@@ -134,7 +134,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* PWA Install Banners (from previous steps) */
+/* PWA Install Banners */
 .pwa-banner {
   position: fixed;
   bottom: 20px;
@@ -208,15 +208,11 @@ html, body {
   background: none;
 }
 
-
-
 .refresh-icon {
   width: 25px;
   height: 25px;
   vertical-align: middle;
 }
-
-
 
 .resource-status {
   display: inline-block;
@@ -236,18 +232,24 @@ html, body {
 
 /* Style for action buttons */
 .action-buttons button {
-  font-size: 1.2rem; /* Larger text size */
-  padding: 12px 20px; /* Increase padding */
-  margin: 10px 0; /* Add margin between buttons */
-  border-radius: 8px; /* Round edges */
-  background-color: #0078D4; /* Primary color */
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background-color: #0078D4;
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
-.action-buttons button:hover {
-  background-color: #005a9e; /* Darker shade on hover */
+.action-buttons button:hover:enabled {
+  background-color: #005a9e;
+}
+
+.action-buttons button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 /* Style for Back button */
@@ -256,22 +258,22 @@ html, body {
   padding: 12px 20px;
   margin: 10px 0;
   border-radius: 8px;
-  background-color: #ccc; /* Neutral color */
+  background-color: #ccc;
   color: #333;
   border: none;
   cursor: pointer;
 }
 
 .back-button:hover {
-  background-color: #aaa; /* Darker shade on hover */
+  background-color: #aaa;
 }
 
 /* Style for date pickers */
 .date-picker {
-  width: 100%; /* Full width */
-  font-size: 1.2rem; /* Larger font */
+  width: 100%;
+  font-size: 1.2rem;
   padding: 10px;
-  margin: 10px 0; /* Add spacing */
+  margin: 10px 0;
   border-radius: 8px;
   border: 1px solid #ddd;
 }
