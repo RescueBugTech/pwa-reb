@@ -181,3 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+window.populateSliderContent = populateSliderContent;
+
