@@ -180,13 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
       sliderContent.appendChild(ul);
     }
   }
+	
+	window.populateSliderContent = populateSliderContent;
+	console.log('populateSliderContent has been assigned to window:', typeof window.populateSliderContent);
+	
 });
-window.populateSliderContent = populateSliderContent;
-console.log('populateSliderContent has been assigned to window:', typeof window.populateSliderContent);
 
 
 
-window.populateSliderContent = populateSliderContent;
-console.log('populateSliderContent has been assigned to window:', typeof window.populateSliderContent);
+
+
 
 
