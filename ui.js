@@ -34,12 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function populateSliderContent(tabId) {
-    sliderImage.innerHTML = '';
+    
     sliderContent.innerHTML = '';
 
     if (tabId === 'home') {
       const name = window.userName || 'User';
       const p = document.createElement('p');
+	  sliderImage.innerHTML = '';
       p.textContent = `Hello, ${name}. Select a tab to get started.`;
       sliderContent.appendChild(p);
 
