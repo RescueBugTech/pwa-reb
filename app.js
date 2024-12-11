@@ -310,23 +310,36 @@ async function createBooking(resourceEmail, start, end) {
   if (!token) return;
 
   const event = {
-    subject: 'Resource Booking',
+    subject: 'Scissor Lift Booking', // Customize subject if needed
     start: { dateTime: start, timeZone: 'UTC' },
     end: { dateTime: end, timeZone: 'UTC' },
+    attendees: [
+      {
+        emailAddress: { address: resourceEmail, name: 'Scissor Lift' }, // Add the Scissor Lift as an attendee
+        type: 'required' // Mark as required attendee
+      }
+    ]
   };
 
-  const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceEmail}/events`, {
+  const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(event),
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event)
   });
 
   if (!response.ok) {
     console.error('Failed to create booking:', response.statusText);
+    alert('Failed to book the resource. Please try again.');
     return false;
   }
+
+  alert('Booking successfully added to your calendar!');
   return true;
 }
+
 
 
 
