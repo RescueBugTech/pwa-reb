@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ul.appendChild(li);
   });
   sliderContent.appendChild(ul);
-}
+
 
 
     } else if (tabId === 'vehicles') {
