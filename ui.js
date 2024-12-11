@@ -182,5 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
 window.populateSliderContent = populateSliderContent;
+console.log('populateSliderContent has been assigned to window:', typeof window.populateSliderContent);
+
 
