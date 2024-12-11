@@ -199,6 +199,99 @@ function getTimeRange() {
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
+
+async function openBookingModal(lift) {
+  const existingBookings = await fetchBookings(lift.email);
+  const blockedTimes = existingBookings.map(booking => ({
+    start: new Date(booking.start),
+    end: new Date(booking.end),
+  }));
+
+  // Create a native date-time picker
+  const startTimePicker = document.createElement('input');
+  startTimePicker.type = 'datetime-local';
+  const endTimePicker = document.createElement('input');
+  endTimePicker.type = 'datetime-local';
+
+  // Filter out blocked times
+  startTimePicker.addEventListener('change', () => {
+    const selectedStart = new Date(startTimePicker.value);
+    if (blockedTimes.some(({ start, end }) => selectedStart >= start && selectedStart < end)) {
+      alert('Selected time overlaps with an existing booking.');
+      startTimePicker.value = ''; // Reset value
+    }
+  });
+
+  // Append the pickers and buttons to the modal
+  const modalContent = document.getElementById('slider-content');
+  modalContent.innerHTML = '';
+  modalContent.appendChild(startTimePicker);
+  modalContent.appendChild(endTimePicker);
+
+  const confirmButton = document.createElement('button');
+  confirmButton.textContent = 'Confirm Booking';
+  confirmButton.addEventListener('click', async () => {
+    const start = startTimePicker.value;
+    const end = endTimePicker.value;
+    if (!start || !end) {
+      alert('Please select valid start and end times.');
+      return;
+    }
+    await createBooking(lift.email, start, end);
+    alert('Booking confirmed!');
+    closeSlider();
+  });
+  modalContent.appendChild(confirmButton);
+}
+
+
+
+
+
+async function fetchBookings(resourceEmail) {
+  const token = await getToken();
+  if (!token) return [];
+
+  const { start, end } = getTimeRange();
+  const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceEmail}/calendar/calendarView?startDateTime=${start}&endDateTime=${end}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    console.error('Failed to fetch bookings:', response.statusText);
+    return [];
+  }
+
+  const data = await response.json();
+  return data.value;
+}
+
+async function createBooking(resourceEmail, start, end) {
+  const token = await getToken();
+  if (!token) return;
+
+  const event = {
+    subject: 'Resource Booking',
+    start: { dateTime: start, timeZone: 'UTC' },
+    end: { dateTime: end, timeZone: 'UTC' },
+  };
+
+  const response = await fetch(`https://graph.microsoft.com/v1.0/users/${resourceEmail}/events`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(event),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to create booking:', response.statusText);
+    return false;
+  }
+  return true;
+}
+
+
+
+
 // Expose refreshResources so that ui.js can call it
 window.refreshResources = async function() {
   await getResourceStatus();

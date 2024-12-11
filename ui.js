@@ -42,43 +42,74 @@ document.addEventListener('DOMContentLoaded', () => {
       p.textContent = `Hello, ${name}. Select a tab to get started.`;
       sliderContent.appendChild(p);
 
-    } else if (tabId === 'scissor-lifts') {
-      const headingContainer = document.createElement('div');
-      headingContainer.className = 'scissor-lifts-header';
+} else if (tabId === 'scissor-lifts') {
+  const headingContainer = document.createElement('div');
+  headingContainer.className = 'scissor-lifts-header';
 
-      const h3 = document.createElement('h3');
-      h3.textContent = 'Scissor Lifts';
+  const h3 = document.createElement('h3');
+  h3.textContent = 'Scissor Lifts';
 
-      const refreshButton = document.createElement('button');
-      refreshButton.className = 'refresh-button';
-      refreshButton.innerHTML = '<img src="eyecons/refresh.png" alt="Refresh" class="refresh-icon">';
-      refreshButton.addEventListener('click', async () => {
-        await window.refreshResources();
-        populateSliderContent('scissor-lifts');
-      });
+  const refreshButton = document.createElement('button');
+  refreshButton.className = 'refresh-button';
+  refreshButton.innerHTML = '<img src="eyecons/refresh.png" alt="Refresh" class="refresh-icon">';
+  refreshButton.addEventListener('click', async () => {
+    await window.refreshResources();
+    populateSliderContent('scissor-lifts');
+  });
 
-      headingContainer.appendChild(h3);
-      headingContainer.appendChild(refreshButton);
-      sliderContent.appendChild(headingContainer);
+  headingContainer.appendChild(h3);
+  headingContainer.appendChild(refreshButton);
+  sliderContent.appendChild(headingContainer);
 
-      const ul = document.createElement('ul');
-      (window.scissorLiftsData || []).forEach(lift => {
-        const li = document.createElement('li');
-        const statusSpan = document.createElement('span');
-        statusSpan.classList.add('resource-status');
+  const ul = document.createElement('ul');
+  (window.scissorLiftsData || []).forEach(lift => {
+    const li = document.createElement('li');
+    const statusSpan = document.createElement('span');
+    statusSpan.classList.add('resource-status');
 
-        if (lift.isBooked && lift.bookingInfo) {
-          statusSpan.classList.add('booked');
-          li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(`${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}`));
-        } else {
-          statusSpan.classList.add('available');
-          li.appendChild(statusSpan);
-          li.appendChild(document.createTextNode(`${lift.name}: Available`));
-        }
-        ul.appendChild(li);
-      });
-      sliderContent.appendChild(ul);
+    if (lift.isBooked && lift.bookingInfo) {
+      statusSpan.classList.add('booked');
+      li.appendChild(statusSpan);
+      li.appendChild(document.createTextNode(`${lift.name}: Booked by ${lift.bookingInfo.organizer} from ${lift.bookingInfo.start} to ${lift.bookingInfo.end}`));
+    } else {
+      statusSpan.classList.add('available');
+      li.appendChild(statusSpan);
+      li.appendChild(document.createTextNode(`${lift.name}: Available`));
+    }
+
+    // Add Action Buttons
+    const actionContainer = document.createElement('div');
+    actionContainer.className = 'action-buttons';
+
+    const bookButton = document.createElement('button');
+    bookButton.textContent = 'Book This Resource';
+    bookButton.addEventListener('click', () => openBookingModal(lift));
+    actionContainer.appendChild(bookButton);
+
+    const reviewButton = document.createElement('button');
+    reviewButton.textContent = 'Review Booking';
+    reviewButton.disabled = !lift.isBooked; // Enable only if there's a booking
+    reviewButton.addEventListener('click', () => reviewBooking(lift));
+    actionContainer.appendChild(reviewButton);
+
+    const extendButton = document.createElement('button');
+    extendButton.textContent = 'Extend Booking';
+    extendButton.disabled = !lift.isBooked; // Enable only for active bookings
+    extendButton.addEventListener('click', () => extendBooking(lift));
+    actionContainer.appendChild(extendButton);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel Booking';
+    cancelButton.disabled = !lift.isBooked; // Enable only for active bookings
+    cancelButton.addEventListener('click', () => cancelBooking(lift));
+    actionContainer.appendChild(cancelButton);
+
+    li.appendChild(actionContainer);
+    ul.appendChild(li);
+  });
+  sliderContent.appendChild(ul);
+}
+
 
     } else if (tabId === 'vehicles') {
       const h3 = document.createElement('h3');
