@@ -46,7 +46,7 @@ html, body {
   justify-content: space-around;
   border-top: 1px solid #ddd;
   background: #ffffff;
-  padding-bottom: 20px; /* Add this line to create a 20px buffer underneath the tabs */
+  padding-bottom: 25px; /* Add this line to create a 20px buffer underneath the tabs */
 }
 
 .tab-button {
