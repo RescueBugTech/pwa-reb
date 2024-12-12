@@ -40,7 +40,7 @@ html, body {
   position: relative; /* Ensure proper stacking */
   z-index: 1; /* Bring the video above the background */
   margin: 0 auto; /* Center the video if needed */
-  background-color: #000; /* Fallback color for browsers not supporting videos */
+  background-color: #f3f3f3; /* Fallback color for browsers not supporting videos */
 }
 
 
