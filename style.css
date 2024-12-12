@@ -39,6 +39,7 @@ html, body {
   flex: 1;
   padding: 16px;
   background: #f3f3f3;
+	z-index: -1; /* Behind the content */
 }
 
 
@@ -52,7 +53,7 @@ html, body {
     min-height: 100%;
     width: auto;
     height: auto;
-    z-index: -1; /* Behind the content */
+    
     object-fit: cover; /* Ensures video fills the space without distortion */
 }
 
