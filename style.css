@@ -36,12 +36,9 @@ html, body {
 
 
 .app-main {
-    position: relative;
-    z-index: 1; /* Above the video */
-    color: #f3f3f3;
-    text-align: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  flex: 1;
+  padding: 16px;
+  background: #f3f3f3;
 }
 
 .tab-bar {
