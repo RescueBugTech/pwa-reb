@@ -33,8 +33,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function populateSliderContent(tabId) {
-    sliderTitle.textContent = tabId.replace('-', ' ');
     sliderContent.innerHTML = '';
+	  
+	    // Define icon paths for each tab
+		  const icons = {
+			'home': 'eyecons/home-tab.png',
+			'scissor-lifts': 'eyecons/scissor-tab.png',
+			'vehicles': 'eyecons/vehicle-tab.png',
+			'qr-booking': 'eyecons/qr-tab.png',
+			'about': 'eyecons/about-tab.png',
+		  };
+
+		  // Add the icon image
+		  if (icons[tabId]) {
+			const iconImg = document.createElement('img');
+			iconImg.src = icons[tabId];
+			iconImg.alt = `${tabId} icon`;
+			iconImg.className = 'slider-icon'; // Add CSS for styling
+			sliderContent.appendChild(iconImg);
+		  }
 
     if (tabId === 'home') {
       const name = window.userName || 'User';
