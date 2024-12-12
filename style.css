@@ -9,7 +9,11 @@ html, body {
 
 
 
-
+main {
+    position: relative;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
+}
 
 /* Fullscreen video background */
 .background-video {
@@ -21,7 +25,7 @@ html, body {
     min-height: 100%;
     width: auto;
     height: auto;
-    z-index: -1; /* Behind the content */
+    /* z-index: -1; /* Behind the content */
     object-fit: cover; /* Ensures video fills the space without distortion */
     pointer-events: none; /* Prevent user interaction */
 }
@@ -53,9 +57,7 @@ html, body {
 .app-main {
   flex: 1;
   padding: 16px;
-    position: relative;
-    height: 100vh; /* Full viewport height */
-    overflow: hidden;
+  background: #f3f3f3;
 }
 
 .tab-bar {
