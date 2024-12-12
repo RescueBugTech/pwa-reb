@@ -43,15 +43,12 @@ html, body {
   background-color: #000; /* Fallback color for browsers not supporting videos */
 }
 
-/* Ensure the <main> tag properly accommodates the video */
-.app-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  background: none; /* Remove background color overlay */
-}
 
+.app-main {
+  flex: 1;
+  padding: 16px;
+  background: #f3f3f3;
+}
 
 .tab-bar {
   display: flex;
