@@ -36,7 +36,7 @@ html, body {
 .landing-video {
   display: block;
   width: 100%; /* Adjust to fill the main container */
-  height: auto; /* Maintain aspect ratio */
+  height: 100vh;
   position: relative; /* Ensure proper stacking */
   z-index: 1; /* Bring the video above the background */
   margin: 0 auto; /* Center the video if needed */
