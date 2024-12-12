@@ -9,21 +9,6 @@ html, body {
 
 
 
-main {
-
-    text-align: center;
-}
-
-/* Stretch the video to fit its container */
-.stretched-video {
-    width: 100%;
-    height: 100%; /* Adjust to fit the container's height */
-    max-width: 100%;
-    object-fit: cover; /* Ensures no distortion */
-    display: block; /* Removes inline styling gaps (optional) */
-    margin: 20px 0; /* Adds space above and below the video */
-}
-
 
 
 
