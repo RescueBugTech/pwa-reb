@@ -10,26 +10,19 @@ html, body {
 
 
 main {
-    position: relative;
-    height: 100vh; /* Full viewport height */
-    overflow: hidden;
+    padding: 20px;
+    text-align: center;
 }
 
-/* Fullscreen video background */
-.background-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    /* z-index: -1; /* Behind the content */
-    object-fit: cover; /* Ensures video fills the space without distortion */
-    pointer-events: none; /* Prevent user interaction */
+/* Stretch the video to fit its container */
+.stretched-video {
+    width: 100%;
+    height: 100%; /* Adjust to fit the container's height */
+    max-width: 100%;
+    object-fit: cover; /* Ensures no distortion */
+    display: block; /* Removes inline styling gaps (optional) */
+    margin: 20px 0; /* Adds space above and below the video */
 }
-
 
 
 
