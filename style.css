@@ -32,26 +32,13 @@ html, body {
   margin: 0;
 }
 
-/* Video styling for the landing page */
-.landing-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: -1; /* Behind the content */
-    object-fit: cover; /* Ensures video fills the area without distortion */
-    pointer-events: none; /* Prevent user interaction */
-}
+
 
 
 .app-main {
     position: relative;
     z-index: 1; /* Above the video */
-    color: white;
+    color: #f3f3f3;
     text-align: center;
     padding: 20px;
     font-family: Arial, sans-serif;
