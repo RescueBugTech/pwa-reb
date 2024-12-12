@@ -39,7 +39,7 @@ html, body {
   flex: 1;
   padding: 16px;
   background: #f3f3f3;
-	z-index: -1; /* Behind the content */
+	
 }
 
 
