@@ -53,7 +53,7 @@ html, body {
     min-height: 100%;
     width: auto;
     height: auto;
-    
+    background: #f3f3f3;
     object-fit: cover; /* Ensures video fills the space without distortion */
 }
 
