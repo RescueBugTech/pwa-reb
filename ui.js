@@ -56,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabId === 'home') {
       const name = window.userName || 'User';
       const p = document.createElement('p');
-      p.textContent = `Hello, ${name}. Select a tab to get started.<br />Test`;
+	  const brElement = document.createElement('br');
+      p.textContent = `Hello, ${name}. Use this app to book a resource within the Sterling environment.${brElement}${brElement}
+		If you need to use one of the Scissor Lifts, go ahead and book it.${brElement}
+		You can also book use it to book the R&D vehicles along with one of the golf carts for a client tour.`;
       sliderContent.appendChild(p);
 
 } else if (tabId === 'scissor-lifts') {
