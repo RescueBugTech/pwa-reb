@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		  const p = document.createElement('p');
 		  p.innerHTML = `Hello, ${name}. Use this app to book a resource within the Sterling environment.<br><br>
 			If you need to use one of the Scissor Lifts, go ahead and book it.<br>
-			You can also use it to book the R&D vehicles along with one of the golf carts for a client tour.`;
+			You can also use it to book the R&D vehicles along with one of the golf carts for a client tour.<br><br>
+			Eventually you will be able to book items via the QR Code section.`;
 		  sliderContent.appendChild(p);
 
 } else if (tabId === 'scissor-lifts') {
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sliderContent.appendChild(upcomingTitle);
 
       const ul = document.createElement('ul');
-      const plans = ['Allor booking of R$D Vehicles', 'Turn on Review, Extend, and Cancel Booking buttons', 'Push alerts for availability', 'Improve visuals'];
+      const plans = ['Allow booking of R&D Vehicles - It is currently a placeholder page', 'Turn on Review, Extend, and Cancel Booking buttons', 'Push alerts for availability', 'Improve visuals'];
       plans.forEach(plan => {
         const li = document.createElement('li');
         li.textContent = plan;
