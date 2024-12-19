@@ -310,7 +310,7 @@ html, body {
   width: 100vw; /* Full width */
   height: 100vh; /* Full height */
   gap: 10px;
-  box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
@@ -345,15 +345,14 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Ensures images don't overflow */
+  overflow: hidden; /* Ensure content fits inside */
 }
 
-/* Images fit perfectly within cells */
+/* Default image styling */
 .grid-item img {
-  width: 100%; /* Fill the width of the cell */
-  height: 100%; /* Fill the height of the cell */
-  object-fit: cover; /* Ensure images maintain aspect ratio and fit */
-  opacity: 0; /* Start hidden */
+  height: auto; /* Default height */
+  max-height: 100%; /* Prevent overflow */
+  opacity: 0; /* Hidden by default */
   transition: opacity 2s; /* Smooth fade-in/out effect */
 }
 
