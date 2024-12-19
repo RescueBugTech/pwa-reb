@@ -53,14 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			sliderContent.appendChild(iconImg);
 		  }
 
-    if (tabId === 'home') {
-      const name = window.userName || 'User';
-      const p = document.createElement('p');
-	  const brElement = document.createElement('br');
-      p.textContent = `Hello, ${name}. Use this app to book a resource within the Sterling environment.${brElement}${brElement}
-		If you need to use one of the Scissor Lifts, go ahead and book it.${brElement}
-		You can also book use it to book the R&D vehicles along with one of the golf carts for a client tour.`;
-      sliderContent.appendChild(p);
+		if (tabId === 'home') {
+		  const name = window.userName || 'User';
+		  const p = document.createElement('p');
+		  p.innerHTML = `Hello, ${name}. Use this app to book a resource within the Sterling environment.<br><br>
+			If you need to use one of the Scissor Lifts, go ahead and book it.<br>
+			You can also use it to book the R&D vehicles along with one of the golf carts for a client tour.`;
+		  sliderContent.appendChild(p);
+		}
+
 
 } else if (tabId === 'scissor-lifts') {
   const headingContainer = document.createElement('div');
