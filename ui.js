@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabId === 'home') {
       const name = window.userName || 'User';
       const p = document.createElement('p');
-      p.textContent = `Hello, ${name}. Select a tab to get started.`;
+      p.textContent = `Hello, ${name}. Select a tab to get started.<br />Test`;
       sliderContent.appendChild(p);
 
 } else if (tabId === 'scissor-lifts') {
