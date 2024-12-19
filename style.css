@@ -302,73 +302,42 @@ html, body {
 }
 
 
-/* Grid container adjustments */
+/* Grid container: Full width and height */
 .grid-container {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr; /* Three rows */
   grid-template-columns: 1fr 1fr; /* Two columns for the middle row */
-  width: 100%; /* Full width */
-  height: auto; /* Adjust height dynamically */
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
   gap: 10px;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
   margin: 0;
   padding: 0;
 }
 
-/* Top row: spans two columns */
-.grid-container > :nth-child(1) {
-  grid-column: span 2; /* Span two columns */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Middle row: two separate cells */
-.grid-container > :nth-child(2),
-.grid-container > :nth-child(3) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Bottom row: spans two columns */
-.grid-container > :nth-child(4) {
-  grid-column: span 2; /* Span two columns */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Transparent background for all cells */
+/* Grid items: Ensures consistent sizing */
 .grid-item {
-  background-color: transparent; /* Make backgrounds transparent */
+  background-color: transparent; /* Transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Ensures images don't overflow */
 }
 
-/* Image styling with custom sizes */
+/* Images fit perfectly within cells */
 .grid-item img {
-  opacity: 0; /* Hidden by default */
+  width: 100%; /* Fill the width of the cell */
+  height: 100%; /* Fill the height of the cell */
+  object-fit: cover; /* Ensure images maintain aspect ratio and fit */
+  opacity: 0; /* Start hidden */
   transition: opacity 2s; /* Smooth fade-in/out effect */
 }
 
-/* Predefined size classes for custom image sizes */
-.img-small {
-  width: 50%; /* Small size */
-  height: auto;
-}
-
-.img-medium {
-  width: 75%; /* Medium size */
-  height: auto;
-}
-
-.img-large {
-  width: 100%; /* Large size */
-  height: auto;
-}
-
+/* Visible images */
 .grid-item img.visible {
   opacity: 1; /* Ensure visibility */
 }
+
 
 
 /* Fade-in and fade-out animation */

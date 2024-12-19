@@ -349,20 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const cell3 = document.querySelector('#cell-3');
   const cell4 = document.querySelector('#cell-4');
 
-  // Define images and their sizes
+  // Define images for each cell
   const images = {
-    cell1: { src: ['images/landing_1.png', 'images/landing_5.png'], size: 'img-small' },
-    cell2: { src: 'images/landing_2.png', size: 'img-medium' },
-    cell3: { src: 'images/landing_3.png', size: 'img-medium' },
-    cell4: { src: 'images/landing_4.png', size: 'img-small' },
+    cell1: ['images/landing_1.png', 'images/landing_5.png'],
+    cell2: 'images/landing_2.png',
+    cell3: 'images/landing_3.png',
+    cell4: 'images/landing_4.png',
   };
 
-  const fadeInImage = (cell, src, sizeClass, delay) => {
+  const fadeInImage = (cell, src, delay) => {
     const img = document.createElement('img');
     img.src = src;
-    img.className = sizeClass; // Apply size class (e.g., 'img-small', 'img-medium')
     img.style.opacity = 0; // Start hidden
-    img.style.transition = 'opacity 2s';
+    img.style.transition = 'opacity 2s'; // Smooth fade-in
+    cell.innerHTML = ''; // Clear previous content
     cell.appendChild(img);
 
     setTimeout(() => {
@@ -370,35 +370,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }, delay);
   };
 
-  const fadeOutCurrentImage = (cell, delay) => {
-    const img = cell.querySelector('img');
-    if (img) {
-      img.style.opacity = 0; // Trigger fade-out
-      setTimeout(() => {
-        cell.removeChild(img); // Remove after fade-out
-      }, delay);
-    }
-  };
-
   const startSequence = async () => {
     // Step 1: Fade in the first image in cell 1
-    fadeInImage(cell1, images.cell1.src[0], images.cell1.size, 0);
+    fadeInImage(cell1, images.cell1[0], 0);
     await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
 
     // Step 2: Fade in images in middle cells
-    fadeInImage(cell2, images.cell2.src, images.cell2.size, 0); // Cell 2
+    fadeInImage(cell2, images.cell2, 0); // Cell 2
     await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s
-    fadeInImage(cell3, images.cell3.src, images.cell3.size, 0); // Cell 3
+    fadeInImage(cell3, images.cell3, 0); // Cell 3
     await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
 
-    // Step 3: Fade out and replace the first image in cell 1
-    fadeOutCurrentImage(cell1, 2000);
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for fade-out
-    fadeInImage(cell1, images.cell1.src[1], images.cell1.size, 0); // Replace image
+    // Step 3: Replace the first image in cell 1
+    fadeInImage(cell1, images.cell1[1], 0); // Replace image
     await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
 
     // Step 4: Fade in the bottom image in cell 4
-    fadeInImage(cell4, images.cell4.src, images.cell4.size, 0);
+    fadeInImage(cell4, images.cell4, 0);
   };
 
   // Start the animation sequence
