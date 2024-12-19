@@ -343,6 +343,74 @@ async function createBooking(resourceEmail, start, end) {
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const cell1 = document.querySelector('#cell-1');
+  const cell2 = document.querySelector('#cell-2');
+  const cell3 = document.querySelector('#cell-3');
+  const cell4 = document.querySelector('#cell-4');
+
+  // Define images to use for each cell
+  const images = {
+    cell1: ['images/landing_1.png', 'images/landing_5.png'],
+    cell2: 'images/landing_2.png',
+    cell3: 'images/landing_3.png',
+    cell4: 'images/landing_4.png',
+  };
+
+  // Helper function to set an image with fade-in effect
+  const fadeInImage = (cell, src, delay) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.opacity = 0;
+    img.style.transition = 'opacity 2s'; // Smooth fade-in
+    cell.appendChild(img);
+
+    setTimeout(() => {
+      img.style.opacity = 1; // Trigger fade-in
+    }, delay);
+  };
+
+  // Helper function to fade out and remove the current image
+  const fadeOutCurrentImage = (cell, delay) => {
+    const img = cell.querySelector('img');
+    if (img) {
+      img.style.opacity = 0; // Trigger fade-out
+      setTimeout(() => {
+        cell.removeChild(img); // Remove after fade-out
+      }, delay);
+    }
+  };
+
+  // Start the animation sequence
+  const startSequence = async () => {
+    // Step 1: Fade in the first image in cell 1
+    fadeInImage(cell1, images.cell1[0], 0);
+    await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
+
+    // Step 2: Fade in images in middle cells separately
+    fadeInImage(cell2, images.cell2, 0); // Cell 2 immediately
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s
+    fadeInImage(cell3, images.cell3, 0); // Cell 3 fades in after Cell 2
+    await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
+
+    // Step 3: Fade out the first image in cell 1
+    fadeOutCurrentImage(cell1, 2000);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for fade-out
+
+    // Step 4: Fade in the second image in cell 1
+    fadeInImage(cell1, images.cell1[1], 0);
+    await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4s
+
+    // Step 5: Fade in the bottom image in cell 4
+    fadeInImage(cell4, images.cell4, 0);
+  };
+
+  // Start the sequence
+  startSequence();
+});
+
+
+
 
 // Expose refreshResources so that ui.js can call it
 window.refreshResources = async function() {

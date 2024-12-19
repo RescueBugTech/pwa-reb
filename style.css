@@ -292,3 +292,73 @@ html, body {
   border-radius: 7px;
   border: 1px solid #ddd;
 }
+
+
+/* Grid container */
+.grid-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr; /* Three equal rows */
+  grid-template-columns: 1fr 1fr; /* Two columns for the middle row */
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  gap: 10px; /* Space between grid cells */
+}
+
+/* Top row - single cell spans two columns */
+.grid-container > :nth-child(1) {
+  grid-column: span 2; /* Span both columns */
+  background-color: #f3f3f3; /* Default background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Middle row - two cells */
+.grid-container > :nth-child(2),
+.grid-container > :nth-child(3) {
+  background-color: #e0e0e0; /* Default background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Bottom row - single cell spans two columns */
+.grid-container > :nth-child(4) {
+  grid-column: span 2; /* Span both columns */
+  background-color: #d0d0d0; /* Default background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Grid item content (e.g., images) */
+.grid-item img {
+  width: 100%; /* Adjust to fit */
+  height: 100%; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensure content fits */
+  opacity: 0; /* Start hidden */
+  transition: opacity 2s; /* Smooth fade-in/out effect */
+}
+
+/* Keep some images always visible */
+.grid-item img.visible {
+  animation: none;
+  opacity: 1;
+}
+
+/* Fade-in and fade-out animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
