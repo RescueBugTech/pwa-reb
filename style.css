@@ -302,55 +302,74 @@ html, body {
 }
 
 
-/* Grid container styling */
+/* Grid container adjustments */
 .grid-container {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr; /* Three rows */
   grid-template-columns: 1fr 1fr; /* Two columns for the middle row */
   width: 100%; /* Full width */
-  max-width: 1000px; /* Optional: limit the max width for better visuals */
   height: auto; /* Adjust height dynamically */
   gap: 10px;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Grid item styling */
+/* Top row: spans two columns */
 .grid-container > :nth-child(1) {
-  grid-column: span 2; /* Top row spans two columns */
+  grid-column: span 2; /* Span two columns */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f3f3f3;
 }
 
+/* Middle row: two separate cells */
 .grid-container > :nth-child(2),
 .grid-container > :nth-child(3) {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e0e0e0;
 }
 
+/* Bottom row: spans two columns */
 .grid-container > :nth-child(4) {
-  grid-column: span 2; /* Bottom row spans two columns */
+  grid-column: span 2; /* Span two columns */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #d0d0d0;
 }
 
-/* Image styling */
+/* Transparent background for all cells */
+.grid-item {
+  background-color: transparent; /* Make backgrounds transparent */
+}
+
+/* Image styling with custom sizes */
 .grid-item img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
   opacity: 0; /* Hidden by default */
   transition: opacity 2s; /* Smooth fade-in/out effect */
+}
+
+/* Predefined size classes for custom image sizes */
+.img-small {
+  width: 50%; /* Small size */
+  height: auto;
+}
+
+.img-medium {
+  width: 75%; /* Medium size */
+  height: auto;
+}
+
+.img-large {
+  width: 100%; /* Large size */
+  height: auto;
 }
 
 .grid-item img.visible {
   opacity: 1; /* Ensure visibility */
 }
+
 
 /* Fade-in and fade-out animation */
 @keyframes fadeInOut {
