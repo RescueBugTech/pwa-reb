@@ -351,10 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Define images and their sizes
   const images = {
-    cell1: { src: ['images/landing_1.png', 'images/landing_5.png'], size: 'img-medium' },
+    cell1: { src: ['images/landing_1.png', 'images/landing_5.png'], size: 'img-small' },
     cell2: { src: 'images/landing_2.png', size: 'img-medium' },
     cell3: { src: 'images/landing_3.png', size: 'img-medium' },
-    cell4: { src: 'images/landing_4.png', size: 'img-medium' },
+    cell4: { src: 'images/landing_4.png', size: 'img-small' },
   };
 
   const fadeInImage = (cell, src, sizeClass, delay) => {
