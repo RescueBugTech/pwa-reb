@@ -179,11 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sliderContent.appendChild(p1);
 
       const p2 = document.createElement('p');
-      p2.textContent = 'Version: 1.0.0';
+      p2.textContent = 'Version: 2.1.0';
       sliderContent.appendChild(p2);
 
       const p3 = document.createElement('p');
-      p3.textContent = '© 2023 Your Company Name';
+      p3.textContent = '© 2025 Sterling International';
       sliderContent.appendChild(p3);
 
       const upcomingTitle = document.createElement('h4');
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sliderContent.appendChild(upcomingTitle);
 
       const ul = document.createElement('ul');
-      const plans = ['Add R&D Vehicles', 'Ability to book from the app', 'Push alerts for availability', 'Improve visuals'];
+      const plans = ['Allor booking of R$D Vehicles', 'Turn on Review, Extend, and Cancel Booking buttons', 'Push alerts for availability', 'Improve visuals'];
       plans.forEach(plan => {
         const li = document.createElement('li');
         li.textContent = plan;
