@@ -315,6 +315,30 @@ html, body {
   padding: 0;
 }
 
+/* Top row: spans two columns */
+.grid-container > :nth-child(1) {
+  grid-column: span 2; /* Span two columns */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Middle row: two separate cells */
+.grid-container > :nth-child(2),
+.grid-container > :nth-child(3) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Bottom row: spans two columns */
+.grid-container > :nth-child(4) {
+  grid-column: span 2; /* Span two columns */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Grid items: Ensures consistent sizing */
 .grid-item {
   background-color: transparent; /* Transparent background */
@@ -337,7 +361,6 @@ html, body {
 .grid-item img.visible {
   opacity: 1; /* Ensure visibility */
 }
-
 
 
 /* Fade-in and fade-out animation */
