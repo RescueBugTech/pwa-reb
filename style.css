@@ -14,16 +14,19 @@ html, body {
 
 
 
+/* App container adjustments */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100vh; /* Full height of the viewport */
 }
 
+/* Header styling */
 .app-header {
   padding: 16px;
   background: #f3f3f3;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .header-title {
@@ -32,10 +35,15 @@ html, body {
   margin: 0;
 }
 
+/* Main content to hold the grid */
 .app-main {
   flex: 1;
-  padding: 16px;
-  background: #f3f3f3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Start content just below the header */
+  padding-top: 16px; /* Adjust spacing below the header */
+  background: #ffffff; /* Background color of the main area */
+  overflow: hidden;
 }
 
 .tab-bar {
@@ -294,56 +302,54 @@ html, body {
 }
 
 
-/* Grid container */
+/* Grid container styling */
 .grid-container {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr; /* Three equal rows */
+  grid-template-rows: 1fr 1fr 1fr; /* Three rows */
   grid-template-columns: 1fr 1fr; /* Two columns for the middle row */
-  width: 100vw; /* Full viewport width */
-  height: 100vh; /* Full viewport height */
-  gap: 10px; /* Space between grid cells */
+  width: 100%; /* Full width */
+  max-width: 1000px; /* Optional: limit the max width for better visuals */
+  height: auto; /* Adjust height dynamically */
+  gap: 10px;
+  box-sizing: border-box;
 }
 
-/* Top row - single cell spans two columns */
+/* Grid item styling */
 .grid-container > :nth-child(1) {
-  grid-column: span 2; /* Span both columns */
-  background-color: #f3f3f3; /* Default background */
+  grid-column: span 2; /* Top row spans two columns */
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #f3f3f3;
 }
 
-/* Middle row - two cells */
 .grid-container > :nth-child(2),
 .grid-container > :nth-child(3) {
-  background-color: #e0e0e0; /* Default background */
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #e0e0e0;
 }
 
-/* Bottom row - single cell spans two columns */
 .grid-container > :nth-child(4) {
-  grid-column: span 2; /* Span both columns */
-  background-color: #d0d0d0; /* Default background */
+  grid-column: span 2; /* Bottom row spans two columns */
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #d0d0d0;
 }
 
-/* Grid item content (e.g., images) */
+/* Image styling */
 .grid-item img {
-  width: 100%; /* Adjust to fit */
-  height: 100%; /* Maintain aspect ratio */
-  object-fit: cover; /* Ensure content fits */
-  opacity: 0; /* Start hidden */
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0; /* Hidden by default */
   transition: opacity 2s; /* Smooth fade-in/out effect */
 }
 
-/* Keep some images always visible */
 .grid-item img.visible {
-  animation: none;
-  opacity: 1;
+  opacity: 1; /* Ensure visibility */
 }
 
 /* Fade-in and fade-out animation */
