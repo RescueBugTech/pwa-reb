@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Define images with specific widths in pixels
   const images = {
-    cell1: { src: ['images/landing_1.png', 'images/landing_5.png'], width: [300, 200] }, // Two images with 300px and 400px widths
+    cell1: { src: ['images/landing_1.png', 'images/landing_5.png'], width: [300, 225] }, // Two images with 300px and 400px widths
     cell2: { src: 'images/landing_2.png', width: 180 }, // Single image with 200px width
     cell3: { src: 'images/landing_3.png', width: 180 }, // Single image with 250px width
     cell4: { src: 'images/landing_4.png', width: 150 }, // Single image with 500px width
