@@ -41,9 +41,11 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-start; /* Start content just below the header */
-  padding-top: 16px; /* Adjust spacing below the header */
+  padding-top: 20px; /* Add spacing above the grid */
   background: #ffffff; /* Background color of the main area */
   overflow: hidden;
+	
+  height: calc(100vh - 60px); /* Adjust height to account for header or spacing */
 }
 
 .tab-bar {
@@ -313,6 +315,8 @@ html, body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+	
+  max-height: 80%; /* Limit the grid's height relative to the main container */
 }
 
 /* Top row: spans two columns */
@@ -344,7 +348,7 @@ html, body {
   background-color: transparent; /* Transparent background */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: 
   overflow: hidden; /* Ensure content fits inside */
 	
   max-height: 200px; /* Example: Set a maximum height for each cell */
