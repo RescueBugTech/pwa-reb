@@ -346,14 +346,21 @@ html, body {
   justify-content: center;
   align-items: center;
   overflow: hidden; /* Ensure content fits inside */
+	
+  max-height: 200px; /* Example: Set a maximum height for each cell */
+  height: 100%; /* Maintain full height unless constrained by max-height */
 }
 
 /* Default image styling */
 .grid-item img {
-  height: auto; /* Default height */
+  /* height: auto; /* Default height */
   max-height: 100%; /* Prevent overflow */
   opacity: 0; /* Hidden by default */
   transition: opacity 2s; /* Smooth fade-in/out effect */
+	
+  width: auto; /* Maintain aspect ratio */
+  height: 100%; /* Fit the cell's height */
+  object-fit: contain; /* Ensure proper scaling */
 }
 
 /* Visible images */
