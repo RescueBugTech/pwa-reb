@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.src = src;
     img.style.opacity = 0; // Start hidden
     img.style.width = `${width}px`; // Set width in pixels
-    img.style.transition = 'opacity 2s'; // Smooth fade-in
+    img.style.transition = 'opacity 1s'; // Smooth fade-in
     cell.innerHTML = ''; // Clear previous content
     cell.appendChild(img);
 
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startSequence = async () => {
     // Step 1: Fade in the first image in cell 1
     fadeInImage(cell1, images.cell1.src[0], images.cell1.width[0], 0);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 4s
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 4s
 
     // Step 2: Fade in images in middle cells
     fadeInImage(cell2, images.cell2.src, images.cell2.width, 0); // Cell 2
