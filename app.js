@@ -384,19 +384,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const startSequence = async () => {
     // Step 1: Fade in the first image in cell 1
     fadeInImage(cell1, images.cell1.src[0], images.cell1.width[0], 0);
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 4s
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 4s
 
     // Step 2: Fade in images in middle cells
     fadeInImage(cell2, images.cell2.src, images.cell2.width, 0); // Cell 2
     await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 2s
     fadeInImage(cell3, images.cell3.src, images.cell3.width, 0); // Cell 3
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 4s
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 4s
 
     // Step 3: Replace the first image in cell 1
     fadeOutCurrentImage(cell1, 2000);
     await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for fade-out
     fadeInImage(cell1, images.cell1.src[1], images.cell1.width[1], 0); // Replace with second image
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 4s
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 4s
 
     // Step 4: Fade in the bottom image in cell 4
     fadeInImage(cell4, images.cell4.src, images.cell4.width, 0);
