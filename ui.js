@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		  const p = document.createElement('p');
 		  p.innerHTML = `Hello, ${name}. 👋🏼 Use this app to book a resource within the Sterling environment.<br><br>
 			This app was designed to make it easy to reserve one of the lifts, a vehicle, or one of the golf carts. Reservation for the golf carts are not required 
-			if you plan on using it for less than 30 minutes. If you need it longer than that, reserve it so that it becomes trackable through the app and the next person know when it becomes availalbe.<br><br>
+			if you plan on using it for less than 30 minutes. If you need it longer than that, reserve it so that it becomes trackable through the app, allowing the next person to know when it becomes availalbe.<br><br>
 			Eventually you will be able to book items via the QR Code section, along with the ability to recieve a push notification when a resource becomes avaialble.`;
 		  sliderContent.appendChild(p);
 
